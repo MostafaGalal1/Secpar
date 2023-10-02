@@ -1,0 +1,20 @@
+{
+  "Assembly": "asm",
+  "C++": "cpp",
+  "C++11": "cpp",
+  "C++17": "cpp",
+  "C++20": "cpp",
+  "Haskell": "hs",
+  "Java": "java",
+  "Node.js": "js",
+  "Pascal": "pas",
+  "Python2": "py",
+  "CPython2": "py",
+  "PyPy2": "py",
+  "Python3": "py",
+  "CPython3": "py",
+  "PyPy3": "py",
+  "Ruby": "rb",
+  "Rust": "rs",
+  "Scala": "scala"
+}
