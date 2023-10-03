@@ -7,8 +7,7 @@ requests.packages.urllib3.disable_warnings()
 
 
 class AbstractScraper(ABC):
-    def __init__(self, platform, username, password, repo_owner, repo_name, access_token):
-        # todo: put in try except to check access token validity
+    def __init__(self, platform, username, password, repo_owner, repo_name, access_token, platform_header):
         git = Github(access_token)
 
         self.platform = platform
@@ -21,9 +20,9 @@ class AbstractScraper(ABC):
                         "sec-ch-ua-mobile": "?0", "sec-ch-ua-platform": "\"Windows\"", "sec-fetch-dest": "empty",
                         "sec-fetch-mode": "cors", "sec-fetch-site": "same-origin", "x-requested-with": "XMLHttpRequest",
                         "Referer": self.username, "Referrer-Policy": "strict-origin-when-cross-origin"}
+        self.platform_header = platform_header
         self.current_submissions = {}
         self.extensions = {}
-        self.readme_content = None
         self.repo = git.get_user(repo_owner).get_repo(repo_name)
 
     def scrape(self):
@@ -31,7 +30,8 @@ class AbstractScraper(ABC):
         self.load_already_added()
         self.login()
         self.get_submissions()
-        self.push_readme()
+        self.update_submission_json()
+        self.update_readme()
 
     def load_extensions(self):
         with open(f'../resources/Extensions/{self.platform}Extensions.json', 'r') as json_file:
@@ -40,9 +40,10 @@ class AbstractScraper(ABC):
     def load_already_added(self):
         submissions_path = f'submissions/{self.platform}Submissions.json'
         try:
-            self.current_submissions = self.repo.get_contents(submissions_path).decoded_content.decode('utf-8')
+            json_string = self.repo.get_contents(submissions_path).decoded_content.decode('utf-8')
+            self.current_submissions = json.loads(json_string)['Submissions']
+            self.current_submissions = {obj['id']: obj for obj in self.current_submissions}
         except:
-            self.repo.create_file(submissions_path, "Create CodeforcesSubmissions.json", '')
             self.current_submissions = {}
 
     @abstractmethod
@@ -58,21 +59,29 @@ class AbstractScraper(ABC):
         pass
 
     def check_already_added(self, submission_id):
-        if self.current_submissions[f'{submission_id}'] is not None:
+        if str(submission_id) in self.current_submissions:
             return True
         return False
+
+    @abstractmethod
+    def update_already_added(self, submission_id, problems_count):
+        pass
 
     @abstractmethod
     def generate_directory_link(self, submission):
         pass
 
-    # todo: update content of readme
+    def update_submission_json(self):
+        self.current_submissions = list(self.current_submissions.values())
+        self.current_submissions = sorted(self.current_submissions, key=lambda item: item['date'], reverse=True)
+        print(self.current_submissions)
+
+        try:
+            self.repo.update_file(f'submissions/{self.platform}Submissions.json', f"Update {self.platform}Submissions.json", json.dumps({'Header': self.platform_header, 'Submissions': self.current_submissions}), self.repo.get_contents(f'submissions/{self.platform}Submissions.json').sha)
+        except:
+            self.repo.create_file(f'submissions/{self.platform}Submissions.json', f"Create {self.platform}Submissions.json", json.dumps({'Header': self.platform_header, 'Submissions': self.current_submissions}))
+
+    # todo: this method is general and will apply three formatters on three platforms so i think about making a factory of formatters each contains a method for writing in readme for specific platform
+    # note: submissions json files now should be already generatable and updatable
     def update_readme(self):
         pass
-
-    def push_readme(self):
-        self.readme_content += '\n'
-        readme_path = 'README.md'
-        self.repo.update_file(readme_path, "Update README.md", self.readme_content,
-                              self.repo.get_contents(readme_path).sha)
-

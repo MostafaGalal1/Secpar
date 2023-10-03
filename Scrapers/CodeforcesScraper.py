@@ -94,11 +94,12 @@ def is_gym_submission(submission):
 class CodeforcesScraper(AbstractScraper):
 
     def __init__(self, user_name, repo_owner, repo_name, access_token):
-        super().__init__('Codeforces', user_name, '', repo_owner, repo_name, access_token)
-
+        self.platform = 'Codeforces'
         self.platform_header = '''## Codeforces
 | # | Problem | Solution | Tags | Submitted |
 | - |  -----  | -------- | ---- | --------- |\n'''
+        super().__init__(self.platform, user_name, '', repo_owner, repo_name, access_token, self.platform_header)
+
         self.session = get_tor_session()
         self.request_count = 0
         self.scrape()
@@ -135,6 +136,7 @@ class CodeforcesScraper(AbstractScraper):
                 pass
 
     def update_already_added(self, submission, problems_count):
+        submission_id = get_submission_id(submission)
         name = get_problem_name(submission)
         problem_link = get_problem_link(submission)
         directory_link = self.repo.html_url + '/blob/main/' + self.generate_directory_link(submission)
@@ -144,7 +146,10 @@ class CodeforcesScraper(AbstractScraper):
         date = get_submission_date(submission)
         tags = " ".join([f"`{tag}`" for tag in tags])
 
-        self.current_submissions[f'{get_submission_id(submission)}'] = f'{problems_count} | [{name}]({problem_link}) | [{language}]({directory_link}) | {tags} `{rating}` | {date} |\n'
+        self.current_submissions[str(submission_id)] = {'id': str(submission_id), 'count': problems_count, 'name': name,
+                                                        'problem_link': problem_link, 'language': language,
+                                                        'directory_link': directory_link, 'tags': f'{tags} `{rating}`',
+                                                        'date': date}
 
     def get_submission_html(self, submission):
         submission_url = get_submission_link(submission)
@@ -156,7 +161,7 @@ class CodeforcesScraper(AbstractScraper):
                 renew_connection()
                 self.request_count = 0
             try:
-                response = self.session.get(submission_url, verify=False, headers=headers)
+                response = self.session.get(submission_url, verify=False, headers=self.headers)
                 print(response.status_code)
                 if response.status_code == 200:
                     return BeautifulSoup(response.text, 'html.parser')
@@ -167,4 +172,7 @@ class CodeforcesScraper(AbstractScraper):
         contest_id = get_contest_id(submission)
         submission_id = get_submission_id(submission)
         language = get_submission_language(submission)
-        return f'Codeforces/{contest_id}/{submission_id}.{self.extensions[language]}'
+        return f'{self.platform}/{contest_id}/{submission_id}.{self.extensions[language]}'
+
+
+scraper = CodeforcesScraper('MostafaM.Galal', 'MostafaGalal1', 'last_exp', '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')

@@ -1,3 +1,5 @@
+import math
+
 import requests
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -43,7 +45,7 @@ def get_submission_language(submission):
 
 
 def get_submission_date(submission):
-    timestamp = datetime.fromtimestamp(submission.get('submitTime') / 1000)
+    timestamp = datetime.fromtimestamp(submission.get('time') / 1000)
     return timestamp.strftime("%Y:%m:%d %H:%M")
 
 
@@ -54,7 +56,11 @@ def get_submission_code(submission):
 class VjudgeScraper(AbstractScraper):
 
     def __init__(self, username, password, repo_owner, repo_name, access_token):
-        super().__init__('Vjudge', username, password, repo_owner, repo_name, access_token)
+        self.platform = 'Vjudge'
+        self.platform_header = '''## vjudge
+| # | Problem | Solution | Submitted |
+| - |  -----  | -------- | --------- |\n'''
+        super().__init__(self.platform, username, password, repo_owner, repo_name, access_token, self.platform_header)
 
         self.session = requests.session()
         self.credits = {
@@ -78,19 +84,20 @@ class VjudgeScraper(AbstractScraper):
         submissions_per_page = 20
         page_count = 0
 
-        while problems_count > 0:
+        while page_count < int(math.ceil(problems_count / submissions_per_page)):
             page_submissions = self.get_page_submissions(page_count, submissions_per_page)
             for submission in page_submissions:
                 submission_id = get_submission_id(submission)
                 if self.check_already_added(submission_id):
                     continue
                 self.push_code(submission)
-                self.update_readme_content(submission, problems_count)
+                self.update_already_added(submission, problems_count)
                 problems_count -= 1
             page_count += 1
 
     def get_page_submissions(self, page, submissions_per_page):
-        response = self.session.get(f'https://vjudge.net/status/data?draw={page}&start={page * submissions_per_page}&length=20&un={self.username}&OJId=All&res=1&orderBy=run_id')
+        response = self.session.get(f'https://vjudge.net/status/data?draw={page}&start={page * submissions_per_page}'
+                                    f'&length=20&un={self.username}&OJId=All&res=1&orderBy=run_id')
         return response.json().get("data")
 
     def push_code(self, submission):
@@ -105,6 +112,18 @@ class VjudgeScraper(AbstractScraper):
             except:
                 pass
 
+    def update_already_added(self, submission, problems_count):
+        submission_id = get_submission_id(submission)
+        name = get_problem_name(submission)
+        problem_link = get_problem_link(submission)
+        directory_link = self.repo.html_url + '/blob/main/' + self.generate_directory_link(submission)
+        language = get_submission_language(submission)
+        date = get_submission_date(submission)
+
+        self.current_submissions[str(submission_id)] = {'id': str(submission_id), 'count': problems_count, 'name': name,
+                                                        'problem_link': problem_link, 'language': language,
+                                                        'directory_link': directory_link, 'date': date}
+
     def get_submission_html(self, submission):
         submission_url = get_submission_url(submission)
         response = self.session.get(submission_url)
@@ -113,4 +132,7 @@ class VjudgeScraper(AbstractScraper):
     def generate_directory_link(self, submission):
         problem_number = get_problem_number(submission)
         oj = get_oj_name(submission)
-        return f'vjudge/{oj}/{problem_number}.cpp'
+        return f'{self.platform}/{oj}/{problem_number}.cpp'
+
+
+scraper = VjudgeScraper('mostafa_galal1', 'mostafagalal123', 'MostafaGalal1', 'last_exp', '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')

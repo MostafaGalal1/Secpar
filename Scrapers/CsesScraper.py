@@ -23,6 +23,10 @@ def get_problem_link(submission):
     return 'https://cses.fi' + submission.find('td', string='Task:').find_next('a').get('href')
 
 
+def get_submission_id(problem):
+    return problem.find('a').text.strip()
+
+
 def get_submission_language(submission):
     return submission.find('td', string='Language:').next_sibling.text
 
@@ -54,7 +58,11 @@ def fix_cascaded_html(topic):
 class CsesScraper(AbstractScraper):
 
     def __init__(self, username, password, repo_owner, repo_name, access_token):
-        super().__init__('Cses', username, password, repo_owner, repo_name, access_token)
+        self.platform = 'CSES'
+        self.platform_header = '''## CSES
+| # | Problem | Solution | Tags | Submitted |
+| - |  -----  | -------- | ---- | --------- |\n'''
+        super().__init__(self.platform, username, password, repo_owner, repo_name, access_token, self.platform_header)
 
         self.session = requests.session()
         self.credits = {
@@ -88,21 +96,35 @@ class CsesScraper(AbstractScraper):
 
             for problem in problems:
                 if check_problem_solved(problem):
-                    self.push_code(problem)
-                    self.update_readme_content(submission, problems_count)
+                    if self.check_already_added(get_submission_id(problem)):
+                        continue
+                    submission = self.get_submission_html(problem)
+                    self.push_code(submission)
+                    self.update_already_added(submission, problems_count)
                     problems_count -= 1
 
-    def push_code(self, problem):
-        submission_html = self.get_submission_html(problem)
-        name = get_problem_name(submission_html)
-        code = get_submission_code(submission_html)
+    def push_code(self, submission):
+        name = get_problem_name(submission)
+        code = get_submission_code(submission)
 
         if code is not None:
-            directory = self.generate_directory_link(problem)
+            directory = self.generate_directory_link(submission)
             try:
                 self.repo.create_file(directory, f"Add problem `{name}`", code)
             except:
                 pass
+
+    def update_already_added(self, submission, problems_count):
+        name = get_problem_name(submission)
+        problem_link = get_problem_link(submission)
+        directory_link = self.repo.html_url + '/blob/main/' + self.generate_directory_link(submission)
+        language = get_submission_language(submission)
+        tags = get_problem_tags(submission)
+        date = get_submission_date(submission)
+
+        self.current_submissions[str(name)] = {'id': str(name), 'count': problems_count, 'name': name, 'problem_link': problem_link,
+                                               'language': language, 'directory_link': directory_link,
+                                               'tags': f'`{tags}`', 'date': date}
 
     def get_submission_html(self, problem):
         response = self.session.get('https://cses.fi' + problem.find('a').get('href'))
@@ -120,4 +142,7 @@ class CsesScraper(AbstractScraper):
         name = get_problem_name(submission)
         topic = get_problem_tags(submission)
         language = get_submission_language(submission)
-        return f'CSES/{topic}/{name}.{self.extensions[language]}'.replace(' ', '_')
+        return f'{self.platform}/{topic}/{name}.{self.extensions[language]}'.replace(' ', '_')
+
+
+scraper = CsesScraper('mostafa_galal', '2020Mostaf+@+00333', 'MostafaGalal1', 'last_exp', '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')
