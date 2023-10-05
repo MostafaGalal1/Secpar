@@ -14,7 +14,7 @@ class CommandFactory:
         elif self.input_data.command is None :
             path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Resources", "User", "UserData.json")
             if os.path.exists(path):
-                print("Please specify the platform to scrap, example: `CP_Scraper -s codeforces`")
+                print("Please specify the platform to scrap, example: `secpar -s codeforces`")
                 return AbstractCommand()
             else:
                 return InitCommand()

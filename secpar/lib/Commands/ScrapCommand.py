@@ -16,7 +16,7 @@ class ScrapCommand(AbstractCommand):
             raise ValueError("You need to initialize your data first")
 
     def execute(self):
-        if self.scraper_name == "cses":
+        if self.scraper_name == "cses" or self.scraper_name == "vjudge":
             self.data["user_name"] = input(f"Enter your {self.scraper_name} username: ")
             self.data["password"] = getpass.getpass("Enter your password: ")
         elif self.scraper_name == "codeforces":
