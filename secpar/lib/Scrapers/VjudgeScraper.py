@@ -3,7 +3,7 @@ import math
 import requests
 from datetime import datetime
 from bs4 import BeautifulSoup
-from Scrapers.AbstractScraper import AbstractScraper
+from secpar.lib.Scrapers.AbstractScraper import AbstractScraper
 
 
 def get_accepted_submissions_count(submissions):
@@ -133,6 +133,3 @@ class VjudgeScraper(AbstractScraper):
         problem_number = get_problem_number(submission)
         oj = get_oj_name(submission)
         return f'{self.platform}/{oj}/{problem_number}.cpp'
-
-
-scraper = VjudgeScraper('mostafa_galal1', 'mostafagalal123', 'MostafaGalal1', 'last_exp', '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')

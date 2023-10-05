@@ -1,5 +1,5 @@
-from CsesScraper import CsesScraper
-from CodeforcesScraper import CodeforcesScraper
+from .CsesScraper import CsesScraper
+from .CodeforcesScraper import CodeforcesScraper
 
 
 class ScraperFactory:

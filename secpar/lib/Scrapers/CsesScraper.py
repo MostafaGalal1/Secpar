@@ -1,7 +1,7 @@
 import requests
 from datetime import datetime
 from bs4 import BeautifulSoup
-from Scrapers.AbstractScraper import AbstractScraper
+from secpar.lib.Scrapers.AbstractScraper import AbstractScraper
 
 
 def get_accepted_submissions_count(account):
@@ -70,13 +70,13 @@ class CsesScraper(AbstractScraper):
             'nick': self.username,
             'pass': self.password
         }
-        self.scrape()
+        print(self.credits)
 
     def login(self):
         login_url = 'https://cses.fi/login'
         response = self.session.get(login_url, headers=self.headers)
         soup = BeautifulSoup(response.text, 'html.parser')
-        self.credits['csrf_token'] = soup.find('input', {'name': 'csrf_token'})['value']
+        self.credits['csrf_token'] = soup.find('Input', {'name': 'csrf_token'})['value']
         response = self.session.post(login_url, self.credits)
         return response.url != login_url
 
@@ -143,6 +143,3 @@ class CsesScraper(AbstractScraper):
         topic = get_problem_tags(submission)
         language = get_submission_language(submission)
         return f'{self.platform}/{topic}/{name}.{self.extensions[language]}'.replace(' ', '_')
-
-
-scraper = CsesScraper('mostafa_galal', '2020Mostaf+@+00333', 'MostafaGalal1', 'last_exp', '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')

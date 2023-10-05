@@ -3,7 +3,7 @@ from stem.control import Controller
 import requests
 from datetime import datetime
 from bs4 import BeautifulSoup
-from Scrapers.AbstractScraper import AbstractScraper
+from secpar.lib.Scrapers.AbstractScraper import AbstractScraper
 
 CONTROL_PORT = 9051
 SOCKS_PORT = 9050
@@ -166,13 +166,10 @@ class CodeforcesScraper(AbstractScraper):
                 if response.status_code == 200:
                     return BeautifulSoup(response.text, 'html.parser')
             except Exception as e:
-                print(e)
+                print(e) #TODO should be exiption not only print
 
     def generate_directory_link(self, submission):
         contest_id = get_contest_id(submission)
         submission_id = get_submission_id(submission)
         language = get_submission_language(submission)
         return f'{self.platform}/{contest_id}/{submission_id}.{self.extensions[language]}'
-
-
-scraper = CodeforcesScraper('MostafaM.Galal', 'MostafaGalal1', 'last_exp', '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')

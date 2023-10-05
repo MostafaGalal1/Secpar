@@ -1,4 +1,6 @@
 import json
+import os
+
 import requests
 from abc import ABC, abstractmethod
 from github import Github
@@ -34,7 +36,8 @@ class AbstractScraper(ABC):
         self.update_readme()
 
     def load_extensions(self):
-        with open(f'../resources/Extensions/{self.platform}Extensions.json', 'r') as json_file:
+        path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Resources", "Extensions", f"{self.platform}Extensions.json")
+        with open(path, 'r') as json_file:
             self.extensions = json.load(json_file)
 
     def load_already_added(self):
