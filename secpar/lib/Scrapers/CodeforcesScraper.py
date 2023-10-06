@@ -26,12 +26,14 @@ def renew_connection():
 
 
 def get_accepted_submissions_count(submissions):
-    count = 0
-    for submission in submissions:
-        if get_submission_verdict(submission) and not is_gym_submission(submission):
-            count += 1
-    return count
-
+    try:
+        count = 0
+        for submission in submissions:
+            if get_submission_verdict(submission) and not is_gym_submission(submission):
+                count += 1
+        return count
+    except:
+        raise EnvironmentError("Please enter valid handel")
 
 def get_contest_id(submission):
     return submission.get('contestId')
@@ -39,6 +41,9 @@ def get_contest_id(submission):
 
 def get_problem_name(submission):
     return submission.get('problem').get('name')
+
+def get_problem_hashkey(submission):
+    return str(submission.get('problem').get('contestId'))+submission.get('problem').get('index')
 
 
 def get_problem_tags(submission):
@@ -93,14 +98,15 @@ def is_gym_submission(submission):
 
 class CodeforcesScraper(AbstractScraper):
 
-    def __init__(self, user_name, repo_owner, repo_name, access_token):
+    def __init__(self, user_name, repo_owner, repo_name, access_token, use_tor=False):
         self.platform = 'Codeforces'
         self.platform_header = '''## Codeforces
 | # | Problem | Solution | Tags | Submitted |
 | - |  -----  | -------- | ---- | --------- |\n'''
         super().__init__(self.platform, user_name, '', repo_owner, repo_name, access_token, self.platform_header)
 
-        self.session = get_tor_session()
+        self.session = get_tor_session() if use_tor else requests.session()
+        self.use_tor = use_tor
         self.request_count = 0
         self.scrape()
 
@@ -112,15 +118,15 @@ class CodeforcesScraper(AbstractScraper):
         response = self.session.get(user_submissions_url, verify=False, headers=self.headers)
         submissions = response.json().get("result")
 
-        problems_count = get_accepted_submissions_count(submissions)
+        end = problems_count = get_accepted_submissions_count(submissions)
 
         for submission in submissions:
-            submission_id = get_submission_id(submission)
-            if not get_submission_verdict(submission) or is_gym_submission(submission) or self.check_already_added(
-                    submission_id):
+            problem_key = get_problem_hashkey(submission)
+            if not get_submission_verdict(submission) or is_gym_submission(submission) or self.check_already_added(problem_key):
                 continue
-            self.push_code(submission)
+            if self.use_tor: self.push_code(submission)
             self.update_already_added(submission, problems_count)
+            self.print_progress_bar(end-problems_count,end)
             problems_count -= 1
 
     def push_code(self, submission):
@@ -136,17 +142,17 @@ class CodeforcesScraper(AbstractScraper):
                 pass
 
     def update_already_added(self, submission, problems_count):
-        submission_id = get_submission_id(submission)
+        problem_key = get_problem_hashkey(submission)
         name = get_problem_name(submission)
         problem_link = get_problem_link(submission)
-        directory_link = self.repo.html_url + '/blob/main/' + self.generate_directory_link(submission)
+        directory_link = self.repo.html_url + '/blob/main/' + self.generate_directory_link(submission) if self.use_tor else get_submission_link(submission)
         language = get_submission_language(submission)
         tags = get_problem_tags(submission)
         rating = get_problem_rating(submission)
         date = get_submission_date(submission)
         tags = " ".join([f"`{tag}`" for tag in tags])
 
-        self.current_submissions[str(submission_id)] = {'id': str(submission_id), 'count': problems_count, 'name': name,
+        self.current_submissions[problem_key] = {'id': problem_key, 'count': problems_count, 'name': name,
                                                         'problem_link': problem_link, 'language': language,
                                                         'directory_link': directory_link, 'tags': f'{tags} `{rating}`',
                                                         'date': date}
@@ -166,10 +172,11 @@ class CodeforcesScraper(AbstractScraper):
                 if response.status_code == 200:
                     return BeautifulSoup(response.text, 'html.parser')
             except Exception as e:
-                print(e) #TODO should be exiption not only print
+                print(e)
 
     def generate_directory_link(self, submission):
         contest_id = get_contest_id(submission)
         submission_id = get_submission_id(submission)
         language = get_submission_language(submission)
         return f'{self.platform}/{contest_id}/{submission_id}.{self.extensions[language]}'
+

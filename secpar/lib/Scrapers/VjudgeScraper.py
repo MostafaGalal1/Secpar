@@ -13,6 +13,8 @@ def get_accepted_submissions_count(submissions):
 def get_problem_number(submission):
     return submission.get('probNum')
 
+def get_problem_hashkey(submission):
+    return submission.get('oj') + submission.get('probNum')
 
 def get_problem_name(submission):
     problem_link = get_problem_link(submission)
@@ -68,7 +70,6 @@ class VjudgeScraper(AbstractScraper):
             'password': self.password,
             'captcha': '',
         }
-        self.scrape()
 
     def login(self):
         login_url = 'https://vjudge.net/user/login'
@@ -76,22 +77,27 @@ class VjudgeScraper(AbstractScraper):
         return response.text == 'success'
 
     def get_submissions(self):
-        user_submissions_url = 'https://vjudge.net/user/solveDetail/mostafa_galal1'
-        response = self.session.get(user_submissions_url, verify=False, headers=self.headers)
-        submissions = response.json().get("acRecords")
+        try:
+            user_submissions_url = f'https://vjudge.net/user/solveDetail/{self.username}'
+            response = self.session.get(user_submissions_url, verify=False, headers=self.headers)
+            submissions = response.json().get("acRecords")
+        except:
+            raise EnvironmentError("Failed to log in wrong username or password")
 
-        problems_count = get_accepted_submissions_count(submissions)
+        end = problems_count = get_accepted_submissions_count(submissions)
         submissions_per_page = 20
         page_count = 0
+        page_limit = int(math.ceil(problems_count / submissions_per_page))
 
-        while page_count < int(math.ceil(problems_count / submissions_per_page)):
+        while page_count < page_limit:
             page_submissions = self.get_page_submissions(page_count, submissions_per_page)
             for submission in page_submissions:
-                submission_id = get_submission_id(submission)
-                if self.check_already_added(submission_id):
+                problem_key = get_problem_hashkey(submission)
+                if self.check_already_added(problem_key):
                     continue
                 self.push_code(submission)
                 self.update_already_added(submission, problems_count)
+                self.print_progress_bar(end - problems_count, end)
                 problems_count -= 1
             page_count += 1
 
@@ -113,14 +119,14 @@ class VjudgeScraper(AbstractScraper):
                 pass
 
     def update_already_added(self, submission, problems_count):
-        submission_id = get_submission_id(submission)
+        problem_key = get_problem_hashkey(submission)
         name = get_problem_name(submission)
         problem_link = get_problem_link(submission)
         directory_link = self.repo.html_url + '/blob/main/' + self.generate_directory_link(submission)
         language = get_submission_language(submission)
         date = get_submission_date(submission)
 
-        self.current_submissions[str(submission_id)] = {'id': str(submission_id), 'count': problems_count, 'name': name,
+        self.current_submissions[problem_key] = {'id': problem_key, 'count': problems_count, 'name': name,
                                                         'problem_link': problem_link, 'language': language,
                                                         'directory_link': directory_link, 'date': date}
 

@@ -5,6 +5,7 @@ import requests
 from abc import ABC, abstractmethod
 from github import Github
 
+
 requests.packages.urllib3.disable_warnings()
 
 
@@ -33,7 +34,6 @@ class AbstractScraper(ABC):
         self.login()
         self.get_submissions()
         self.update_submission_json()
-        self.update_readme()
 
     def load_extensions(self):
         path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Resources", "Extensions", f"{self.platform}Extensions.json")
@@ -74,17 +74,16 @@ class AbstractScraper(ABC):
     def generate_directory_link(self, submission):
         pass
 
+    def print_progress_bar(self, progress, end):
+        print("[{0}{1}] {2}%".format("█" * progress, "-" * (end - progress), progress), end="\r")
+        if progress == end:
+            print()
+
     def update_submission_json(self):
         self.current_submissions = list(self.current_submissions.values())
         self.current_submissions = sorted(self.current_submissions, key=lambda item: item['date'], reverse=True)
-        print(self.current_submissions)
 
         try:
             self.repo.update_file(f'submissions/{self.platform}Submissions.json', f"Update {self.platform}Submissions.json", json.dumps({'Header': self.platform_header, 'Submissions': self.current_submissions}), self.repo.get_contents(f'submissions/{self.platform}Submissions.json').sha)
         except:
             self.repo.create_file(f'submissions/{self.platform}Submissions.json', f"Create {self.platform}Submissions.json", json.dumps({'Header': self.platform_header, 'Submissions': self.current_submissions}))
-
-    # todo: this method is general and will apply three formatters on three platforms so i think about making a factory of formatters each contains a method for writing in readme for specific platform
-    # note: submissions json files now should be already generatable and updatable
-    def update_readme(self):
-        pass

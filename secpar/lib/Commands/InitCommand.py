@@ -17,7 +17,8 @@ class InitCommand(AbstractCommand):
         user_data = {
             "repo_owner": github_name,
             "repo_name": github_repo_name,
-            "access_token": access_token_github
+            "access_token": access_token_github,
+            "platforms": {}
         }
 
         try:

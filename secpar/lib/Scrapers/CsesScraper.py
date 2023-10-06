@@ -3,13 +3,15 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from secpar.lib.Scrapers.AbstractScraper import AbstractScraper
 
-
 def get_accepted_submissions_count(account):
-    response = requests.get(account)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    table = soup.findAll('table', class_='narrow')[1]
-    return int(table.find('a').text)
 
+    try:
+        response = requests.get(account)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        table = soup.findAll('table', class_='narrow')[1]
+        return int(table.find('a').text)
+    except:
+        raise EnvironmentError("Failed to log in wrong username or password")
 
 def get_problem_name(submission):
     return submission.find('td', string='Task:').next_sibling.text
@@ -58,7 +60,7 @@ def fix_cascaded_html(topic):
 class CsesScraper(AbstractScraper):
 
     def __init__(self, username, password, repo_owner, repo_name, access_token):
-        self.platform = 'CSES'
+        self.platform = 'Cses'
         self.platform_header = '''## CSES
 | # | Problem | Solution | Tags | Submitted |
 | - |  -----  | -------- | ---- | --------- |\n'''
@@ -70,13 +72,12 @@ class CsesScraper(AbstractScraper):
             'nick': self.username,
             'pass': self.password
         }
-        print(self.credits)
 
     def login(self):
         login_url = 'https://cses.fi/login'
         response = self.session.get(login_url, headers=self.headers)
         soup = BeautifulSoup(response.text, 'html.parser')
-        self.credits['csrf_token'] = soup.find('Input', {'name': 'csrf_token'})['value']
+        self.credits['csrf_token'] = soup.find('input', {'name': 'csrf_token'})['value']
         response = self.session.post(login_url, self.credits)
         return response.url != login_url
 
@@ -87,7 +88,7 @@ class CsesScraper(AbstractScraper):
         topics = soup.find_all('ul', class_='task-list')
         account = 'https://cses.fi' + soup.find('a', class_='account').get('href')
 
-        problems_count = get_accepted_submissions_count(account)
+        end = problems_count = get_accepted_submissions_count(account)
 
         for topic in topics:
             topic = fix_cascaded_html(topic)
@@ -101,6 +102,7 @@ class CsesScraper(AbstractScraper):
                     submission = self.get_submission_html(problem)
                     self.push_code(submission)
                     self.update_already_added(submission, problems_count)
+                    self.print_progress_bar(end-problems_count,end)
                     problems_count -= 1
 
     def push_code(self, submission):
@@ -110,9 +112,9 @@ class CsesScraper(AbstractScraper):
         if code is not None:
             directory = self.generate_directory_link(submission)
             try:
-                self.repo.create_file(directory, f"Add problem `{name}`", code)
+                self.repo.create_file(directory, f"Add problem {name}", code)
             except:
-                pass
+                ypass
 
     def update_already_added(self, submission, problems_count):
         name = get_problem_name(submission)
@@ -124,7 +126,7 @@ class CsesScraper(AbstractScraper):
 
         self.current_submissions[str(name)] = {'id': str(name), 'count': problems_count, 'name': name, 'problem_link': problem_link,
                                                'language': language, 'directory_link': directory_link,
-                                               'tags': f'`{tags}`', 'date': date}
+                                               'tags': f'{tags}', 'date': date}
 
     def get_submission_html(self, problem):
         response = self.session.get('https://cses.fi' + problem.find('a').get('href'))
