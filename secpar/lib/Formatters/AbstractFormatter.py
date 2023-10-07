@@ -12,8 +12,8 @@ class AbstractFormatter(ABC):
     def format(self):
         pass
     def get_data(self):
-            file_contents = self.repo.get_contents(f"submissions/{self.platform}Submissions.json")
-            data = json.loads(file_contents.decoded_content.decode('utf-8'))
-            return data
+        file_contents = self.repo.get_contents(f"submissions/{self.platform}Submissions.json")
+        data = json.loads(file_contents.decoded_content.decode('utf-8'))
+        return data
     def get_header(self):
         return self.data.get("Header")

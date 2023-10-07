@@ -14,6 +14,6 @@ class CsesFormatter(AbstractFormatter):
             tags = submission.get("tags")
             date = submission.get("date")
             readme_content += f'{count} | [{name}]({problem_link}) | [{language}]({solution_link}) | {tags} | {date} |\n'
-            count-=1
+            count -= 1
         readme_content += '\n'
         return readme_content

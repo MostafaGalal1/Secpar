@@ -121,17 +121,18 @@ class CodeforcesScraper(AbstractScraper):
         response = self.session.get(user_submissions_url, verify=False, headers=self.headers)
         submissions = response.json().get("result")
 
-        end = problems_count = get_accepted_submissions_count(submissions)
+        end = get_accepted_submissions_count(submissions)
+        progress_count = 0
 
         for submission in submissions:
+            self.print_progress_bar(progress_count + 1, end)
+            progress_count += 1
             problem_key = get_problem_hashkey(submission)
             if not get_submission_verdict(submission) or is_gym_submission(submission) or self.check_already_added(problem_key):
                 continue
             if self.use_tor: self.push_code(submission)
-            self.update_already_added(submission, problems_count)
-            self.print_progress_bar(end-problems_count+1,end)
+            self.update_already_added(submission)
             sleep(0.05)
-            problems_count -= 1
 
     def push_code(self, submission):
         submission_html = self.get_submission_html(submission)
@@ -145,7 +146,7 @@ class CodeforcesScraper(AbstractScraper):
             except:
                 pass
 
-    def update_already_added(self, submission, problems_count):
+    def update_already_added(self, submission):
         problem_key = get_problem_hashkey(submission)
         name = get_problem_name(submission)
         problem_link = get_problem_link(submission)
@@ -156,7 +157,7 @@ class CodeforcesScraper(AbstractScraper):
         date = get_submission_date(submission)
         tags = " ".join([f"`{tag}`" for tag in tags])
 
-        self.current_submissions[problem_key] = {'id': problem_key, 'count': problems_count, 'name': name,
+        self.current_submissions[problem_key] = {'id': problem_key, 'name': name,
                                                         'problem_link': problem_link, 'language': language,
                                                         'directory_link': directory_link, 'tags': f'{tags} `{rating}`',
                                                         'date': date}

@@ -1,8 +1,5 @@
-import math
-
 import requests
 from datetime import datetime
-from bs4 import BeautifulSoup
 from secpar.lib.Scrapers.AbstractScraper import AbstractScraper
 
 
@@ -83,21 +80,24 @@ class VjudgeScraper(AbstractScraper):
         except:
             raise EnvironmentError("Failed to log in wrong username or password")
 
-        end = problems_count = get_accepted_submissions_count(submissions)
+        end = get_accepted_submissions_count(submissions)
+        progress_count = 0
+
         submissions_per_page = 20
         page_count = 0
-        page_limit = int(math.ceil(problems_count / submissions_per_page))
 
-        while page_count < page_limit:
+        while True:
             page_submissions = self.get_page_submissions(page_count, submissions_per_page)
+            if not page_submissions:
+                break
             for submission in page_submissions:
+                self.print_progress_bar(progress_count + 1, end)
+                progress_count += 1
                 problem_key = get_problem_hashkey(submission)
                 if self.check_already_added(problem_key):
                     continue
                 self.push_code(submission)
-                self.update_already_added(submission, problems_count)
-                self.print_progress_bar(end - problems_count+1, end)
-                problems_count -= 1
+                self.update_already_added(submission)
             page_count += 1
 
     def get_page_submissions(self, page, submissions_per_page):
@@ -117,7 +117,7 @@ class VjudgeScraper(AbstractScraper):
             except:
                 pass
 
-    def update_already_added(self, submission, problems_count):
+    def update_already_added(self, submission):
         problem_key = get_problem_hashkey(submission)
         name = get_problem_name(submission)
         problem_link = get_problem_link(submission)
@@ -125,7 +125,7 @@ class VjudgeScraper(AbstractScraper):
         language = get_submission_language(submission)
         date = get_submission_date(submission)
 
-        self.current_submissions[problem_key] = {'id': problem_key, 'count': problems_count, 'name': name,
+        self.current_submissions[problem_key] = {'id': problem_key, 'name': name,
                                                         'problem_link': problem_link, 'language': language,
                                                         'directory_link': directory_link, 'date': date}
 

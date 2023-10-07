@@ -1,5 +1,6 @@
 import json
 import os
+from time import sleep
 
 import requests
 from abc import ABC, abstractmethod
@@ -67,14 +68,15 @@ class AbstractScraper(ABC):
         return False
 
     @abstractmethod
-    def update_already_added(self, submission_id, problems_count):
+    def update_already_added(self, submission_id):
         pass
 
     @abstractmethod
     def generate_directory_link(self, submission):
         pass
 
-    def print_progress_bar(self, progress, end):
+    @staticmethod
+    def print_progress_bar(progress, end):
         print("[{0}{1}] {2}%    ".format("█" * int((progress/end)*50), "-" * int(50-(progress/end)*50), int((progress/end)*100)), end="\r")
         if progress == end:
             print("")
@@ -87,3 +89,4 @@ class AbstractScraper(ABC):
             self.repo.update_file(f'submissions/{self.platform}Submissions.json', f"Update {self.platform}Submissions.json", json.dumps({'Header': self.platform_header, 'Submissions': self.current_submissions}), self.repo.get_contents(f'submissions/{self.platform}Submissions.json').sha)
         except:
             self.repo.create_file(f'submissions/{self.platform}Submissions.json', f"Create {self.platform}Submissions.json", json.dumps({'Header': self.platform_header, 'Submissions': self.current_submissions}))
+            sleep(2)

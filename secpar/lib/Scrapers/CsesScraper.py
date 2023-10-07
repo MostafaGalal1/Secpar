@@ -88,7 +88,8 @@ class CsesScraper(AbstractScraper):
         topics = soup.find_all('ul', class_='task-list')
         account = 'https://cses.fi' + soup.find('a', class_='account').get('href')
 
-        end = problems_count = get_accepted_submissions_count(account)
+        end = get_accepted_submissions_count(account)
+        progress_count = 0
 
         for topic in topics:
             topic = fix_cascaded_html(topic)
@@ -97,13 +98,13 @@ class CsesScraper(AbstractScraper):
 
             for problem in problems:
                 if check_problem_solved(problem):
+                    self.print_progress_bar(progress_count + 1, end)
+                    progress_count += 1
                     if self.check_already_added(get_submission_id(problem)):
                         continue
                     submission = self.get_submission_html(problem)
                     self.push_code(submission)
-                    self.update_already_added(submission, problems_count)
-                    self.print_progress_bar(end-problems_count+1,end)
-                    problems_count -= 1
+                    self.update_already_added(submission)
 
     def push_code(self, submission):
         name = get_problem_name(submission)
@@ -116,7 +117,7 @@ class CsesScraper(AbstractScraper):
             except:
                 pass
 
-    def update_already_added(self, submission, problems_count):
+    def update_already_added(self, submission):
         name = get_problem_name(submission)
         problem_link = get_problem_link(submission)
         directory_link = self.repo.html_url + '/blob/main/' + self.generate_directory_link(submission)
@@ -124,7 +125,7 @@ class CsesScraper(AbstractScraper):
         tags = get_problem_tags(submission)
         date = get_submission_date(submission)
 
-        self.current_submissions[str(name)] = {'id': str(name), 'count': problems_count, 'name': name, 'problem_link': problem_link,
+        self.current_submissions[str(name)] = {'id': str(name), 'name': name, 'problem_link': problem_link,
                                                'language': language, 'directory_link': directory_link,
                                                'tags': f'{tags}', 'date': date}
 
