@@ -31,6 +31,10 @@ class ScrapCommand(AbstractCommand):
         readme_content = readme_builder.build()
         readme_builder.update_readme(readme_content)
 
+        self.data.pop("user_name")
+        if "password" in self.data:
+            self.data.pop("password")
+
         try:
             with open(self.path, 'w') as json_file:
                 json.dump(self.data, json_file, indent=4)

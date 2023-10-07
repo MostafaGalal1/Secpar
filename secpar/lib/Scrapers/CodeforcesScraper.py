@@ -1,3 +1,5 @@
+from time import sleep
+
 from stem import Signal
 from stem.control import Controller
 import requests
@@ -26,14 +28,16 @@ def renew_connection():
 
 
 def get_accepted_submissions_count(submissions):
+    x = {}
     try:
         count = 0
         for submission in submissions:
-            if get_submission_verdict(submission) and not is_gym_submission(submission):
+            if get_submission_verdict(submission) and not is_gym_submission(submission) and get_problem_hashkey(submission) not in x:
                 count += 1
+                x[get_problem_hashkey(submission)] = ""
         return count
     except:
-        raise EnvironmentError("Please enter valid handel")
+        raise EnvironmentError("Please enter valid handle")
 
 def get_contest_id(submission):
     return submission.get('contestId')
@@ -98,7 +102,7 @@ def is_gym_submission(submission):
 
 class CodeforcesScraper(AbstractScraper):
 
-    def __init__(self, user_name, repo_owner, repo_name, access_token, use_tor=False):
+    def __init__(self, user_name, repo_owner, repo_name, access_token, use_tor=True):
         self.platform = 'Codeforces'
         self.platform_header = '''## Codeforces
 | # | Problem | Solution | Tags | Submitted |
@@ -108,7 +112,6 @@ class CodeforcesScraper(AbstractScraper):
         self.session = get_tor_session() if use_tor else requests.session()
         self.use_tor = use_tor
         self.request_count = 0
-        self.scrape()
 
     def login(self):
         pass
@@ -126,7 +129,8 @@ class CodeforcesScraper(AbstractScraper):
                 continue
             if self.use_tor: self.push_code(submission)
             self.update_already_added(submission, problems_count)
-            self.print_progress_bar(end-problems_count,end)
+            self.print_progress_bar(end-problems_count+1,end)
+            sleep(0.05)
             problems_count -= 1
 
     def push_code(self, submission):
@@ -168,7 +172,6 @@ class CodeforcesScraper(AbstractScraper):
                 self.request_count = 0
             try:
                 response = self.session.get(submission_url, verify=False, headers=self.headers)
-                print(response.status_code)
                 if response.status_code == 200:
                     return BeautifulSoup(response.text, 'html.parser')
             except Exception as e:
@@ -179,4 +182,3 @@ class CodeforcesScraper(AbstractScraper):
         submission_id = get_submission_id(submission)
         language = get_submission_language(submission)
         return f'{self.platform}/{contest_id}/{submission_id}.{self.extensions[language]}'
-

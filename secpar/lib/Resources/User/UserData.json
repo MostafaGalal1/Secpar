@@ -3,10 +3,6 @@
     "repo_name": "x",
     "access_token": "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",
     "platforms": {
-        "codeforces": "",
-        "cses": "",
-        "vjudge": ""
-    },
-    "user_name": "mostafa_galal1",
-    "password": "5665"
+        "codeforces": ""
+    }
 }

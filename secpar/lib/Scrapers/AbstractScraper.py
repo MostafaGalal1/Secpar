@@ -75,9 +75,9 @@ class AbstractScraper(ABC):
         pass
 
     def print_progress_bar(self, progress, end):
-        print("[{0}{1}] {2}%".format("█" * progress, "-" * (end - progress), progress), end="\r")
+        print("[{0}{1}] {2}%    ".format("█" * int((progress/end)*50), "-" * int(50-(progress/end)*50), int((progress/end)*100)), end="\r")
         if progress == end:
-            print()
+            print("")
 
     def update_submission_json(self):
         self.current_submissions = list(self.current_submissions.values())

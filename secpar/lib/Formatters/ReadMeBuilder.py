@@ -34,7 +34,6 @@ class ReadMeBuilder():
 
     def build(self):
         readme_content = ""
-        print(self.platforms)
         for platform in self.platforms:
             readme_content += self.get_formmater(platform).format()
         return readme_content

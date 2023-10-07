@@ -102,7 +102,7 @@ class CsesScraper(AbstractScraper):
                     submission = self.get_submission_html(problem)
                     self.push_code(submission)
                     self.update_already_added(submission, problems_count)
-                    self.print_progress_bar(end-problems_count,end)
+                    self.print_progress_bar(end-problems_count+1,end)
                     problems_count -= 1
 
     def push_code(self, submission):
@@ -114,7 +114,7 @@ class CsesScraper(AbstractScraper):
             try:
                 self.repo.create_file(directory, f"Add problem {name}", code)
             except:
-                ypass
+                pass
 
     def update_already_added(self, submission, problems_count):
         name = get_problem_name(submission)

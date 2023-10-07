@@ -17,10 +17,9 @@ def get_problem_hashkey(submission):
     return submission.get('oj') + submission.get('probNum')
 
 def get_problem_name(submission):
-    problem_link = get_problem_link(submission)
-    response = requests.get(problem_link)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    return soup.find('div', id='prob-title').find('h2').text
+    problem_number = get_problem_number(submission)
+    response = requests.get(f'https://vjudge.net/problem/data?draw=0&start=0&length=20&OJId=All&probNum={problem_number}&source=&category=all')
+    return response.json().get("data")[0].get('title')
 
 
 def get_oj_name(submission):
@@ -97,7 +96,7 @@ class VjudgeScraper(AbstractScraper):
                     continue
                 self.push_code(submission)
                 self.update_already_added(submission, problems_count)
-                self.print_progress_bar(end - problems_count, end)
+                self.print_progress_bar(end - problems_count+1, end)
                 problems_count -= 1
             page_count += 1
 

@@ -14,6 +14,7 @@ setup(
         "requests>=2.0.0",
         "beautifulsoup4>=4.0.0",
         "argparse>=1.4.0",
-        "stem>=1.8.0"
+        "stem>=1.8.0",
+        "PySocks>=1.7.1,<2.0.0",
     ]
 )
