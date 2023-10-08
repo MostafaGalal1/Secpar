@@ -8,16 +8,16 @@ from ..Formatters.VjudgeFormatter import VjudgeFormatter
 
 class ReadMeBuilder():
     def __init__(self, data):
-        self.platforms = data.get("platforms")
+        self.platforms = {"Cses","Codeforces","Vjudge"}
         git = Github(data.get("access_token"))
         self.repo = git.get_user(data.get("repo_owner")).get_repo(data.get("repo_name"))
 
     def get_formmater(self, name):
-        if name == "cses":
+        if name == "Cses":
             return CsesFormatter(self.repo)
-        elif name == "codeforces":
+        elif name == "Codeforces":
             return CodeforcesFormatter(self.repo)
-        elif name == "vjudge":
+        elif name == "Vjudge":
             return VjudgeFormatter(self.repo)
 
     def update_readme(self, readme_content):

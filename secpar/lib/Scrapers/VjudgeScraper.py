@@ -3,10 +3,6 @@ from datetime import datetime
 from secpar.lib.Scrapers.AbstractScraper import AbstractScraper
 
 
-def get_accepted_submissions_count(submissions):
-    return sum(len(platform) for platform in submissions.values())
-
-
 def get_problem_number(submission):
     return submission.get('probNum')
 
@@ -72,6 +68,14 @@ class VjudgeScraper(AbstractScraper):
         response = self.session.post(login_url, self.credits)
         return response.text == 'success'
 
+    def get_accepted_submissions_count(slef, submissions):
+        count = 0
+        for platform in submissions:
+            for submission in submissions.get(platform):
+                if not slef.check_already_added(platform+submission):
+                    count += 1
+        return count
+
     def get_submissions(self):
         try:
             user_submissions_url = f'https://vjudge.net/user/solveDetail/{self.username}'
@@ -80,7 +84,7 @@ class VjudgeScraper(AbstractScraper):
         except:
             raise EnvironmentError("Failed to log in wrong username or password")
 
-        end = get_accepted_submissions_count(submissions)
+        end = self.get_accepted_submissions_count(submissions)
         progress_count = 0
 
         submissions_per_page = 20
@@ -91,13 +95,17 @@ class VjudgeScraper(AbstractScraper):
             if not page_submissions:
                 break
             for submission in page_submissions:
-                self.print_progress_bar(progress_count + 1, end)
-                progress_count += 1
                 problem_key = get_problem_hashkey(submission)
                 if self.check_already_added(problem_key):
                     continue
+                self.print_progress_bar(progress_count + 1, end)
+                progress_count += 1
                 self.push_code(submission)
                 self.update_already_added(submission)
+
+                if progress_count % 100 == 0:
+                    self.update_submission_json()
+
             page_count += 1
 
     def get_page_submissions(self, page, submissions_per_page):

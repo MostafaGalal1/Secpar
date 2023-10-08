@@ -1,5 +1,5 @@
 from .InitCommand import *
-from .ScrapCommand import *
+from .ScrapeCommand import *
 from .AbstractCommand import *
 
 class CommandFactory:

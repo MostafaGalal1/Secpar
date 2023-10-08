@@ -27,18 +27,6 @@ def renew_connection():
         controller.signal(Signal.NEWNYM)
 
 
-def get_accepted_submissions_count(submissions):
-    x = {}
-    try:
-        count = 0
-        for submission in submissions:
-            if get_submission_verdict(submission) and not is_gym_submission(submission) and get_problem_hashkey(submission) not in x:
-                count += 1
-                x[get_problem_hashkey(submission)] = ""
-        return count
-    except:
-        raise EnvironmentError("Please enter valid handle")
-
 def get_contest_id(submission):
     return submission.get('contestId')
 
@@ -76,6 +64,9 @@ def get_submission_id(submission):
     return submission.get('id')
 
 
+def is_valid_submission(submission):
+     return get_submission_verdict(submission) and not is_gym_submission(submission)
+
 def get_submission_language(submission):
     return submission.get('programmingLanguage')
 
@@ -102,7 +93,7 @@ def is_gym_submission(submission):
 
 class CodeforcesScraper(AbstractScraper):
 
-    def __init__(self, user_name, repo_owner, repo_name, access_token, use_tor=True):
+    def __init__(self, user_name, repo_owner, repo_name, access_token, use_tor=False):
         self.platform = 'Codeforces'
         self.platform_header = '''## Codeforces
 | # | Problem | Solution | Tags | Submitted |
@@ -116,23 +107,37 @@ class CodeforcesScraper(AbstractScraper):
     def login(self):
         pass
 
+    def get_new_submissions(self, submissions):
+        new_submissions = []
+        submissions_hash = set()
+
+        for submission in submissions:
+            if is_valid_submission(submission):
+                problem_key = get_problem_hashkey(submission)
+                if problem_key not in submissions_hash and not self.check_already_added(problem_key):
+                    new_submissions.append(submission)
+                    submissions_hash.add(problem_key)
+
+        return new_submissions
+
     def get_submissions(self):
         user_submissions_url = f'https://codeforces.com/api/user.status?handle={self.username}'
         response = self.session.get(user_submissions_url, verify=False, headers=self.headers)
         submissions = response.json().get("result")
 
-        end = get_accepted_submissions_count(submissions)
+        new_submissions = self.get_new_submissions(submissions)
+        end = len(new_submissions)
         progress_count = 0
 
-        for submission in submissions:
+        for submission in new_submissions:
+
             self.print_progress_bar(progress_count + 1, end)
             progress_count += 1
-            problem_key = get_problem_hashkey(submission)
-            if not get_submission_verdict(submission) or is_gym_submission(submission) or self.check_already_added(problem_key):
-                continue
             if self.use_tor: self.push_code(submission)
             self.update_already_added(submission)
-            sleep(0.05)
+
+            if progress_count % 100 == 0 :
+                self.update_submission_json()
 
     def push_code(self, submission):
         submission_html = self.get_submission_html(submission)

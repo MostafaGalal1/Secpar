@@ -24,19 +24,7 @@ class ScrapCommand(AbstractCommand):
         elif self.scraper_name == "codeforces":
             self.data["user_name"] = input("Enter your Codeforces handle: ")
 
-        self.data["platforms"][self.scraper_name] = ""
-
         ScraperFactory(self.scraper_name, self.data).create().scrape()
         readme_builder = ReadMeBuilder(self.data)
         readme_content = readme_builder.build()
         readme_builder.update_readme(readme_content)
-
-        self.data.pop("user_name")
-        if "password" in self.data:
-            self.data.pop("password")
-
-        try:
-            with open(self.path, 'w') as json_file:
-                json.dump(self.data, json_file, indent=4)
-        except Exception as e:
-            print(f"Error writing to 'userdata.json': {e}")

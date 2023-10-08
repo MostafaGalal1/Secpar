@@ -4,6 +4,7 @@ from .AbstractFormatter import AbstractFormatter
 class CsesFormatter(AbstractFormatter):
 
     def format(self):
+        if self.data is None: return ""
         readme_content = self.get_header()
         count = len(self.data["Submissions"])
         for submission in self.data["Submissions"]:

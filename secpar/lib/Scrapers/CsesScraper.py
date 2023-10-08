@@ -87,7 +87,6 @@ class CsesScraper(AbstractScraper):
         soup = BeautifulSoup(response.text, 'html.parser')
         topics = soup.find_all('ul', class_='task-list')
         account = 'https://cses.fi' + soup.find('a', class_='account').get('href')
-
         end = get_accepted_submissions_count(account)
         progress_count = 0
 
@@ -95,16 +94,18 @@ class CsesScraper(AbstractScraper):
             topic = fix_cascaded_html(topic)
             soup = BeautifulSoup(topic, 'html.parser')
             problems = soup.find_all('li', class_='task')
-
             for problem in problems:
                 if check_problem_solved(problem):
+                    if self.check_already_added(get_submission_id(problem)):
+                        end -= 1
+                        continue
                     self.print_progress_bar(progress_count + 1, end)
                     progress_count += 1
-                    if self.check_already_added(get_submission_id(problem)):
-                        continue
                     submission = self.get_submission_html(problem)
                     self.push_code(submission)
                     self.update_already_added(submission)
+                if progress_count % 100 == 0:
+                    self.update_submission_json()
 
     def push_code(self, submission):
         name = get_problem_name(submission)
