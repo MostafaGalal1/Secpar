@@ -23,6 +23,8 @@ class ScrapCommand(AbstractCommand):
             self.data["password"] = getpass.getpass("Enter your password: ")
         elif self.scraper_name == "codeforces":
             self.data["user_name"] = input("Enter your Codeforces handle: ")
+            use_tor_input = input("Do you want to use tor? (y/n)").strip().lower()
+            self.data["use_tor"] = True if use_tor_input =="y" else False
 
         ScraperFactory(self.scraper_name, self.data).create().scrape()
         readme_builder = ReadMeBuilder(self.data)

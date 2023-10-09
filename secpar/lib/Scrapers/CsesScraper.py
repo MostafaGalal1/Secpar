@@ -3,8 +3,8 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from secpar.lib.Scrapers.AbstractScraper import AbstractScraper
 
+# Function to get the count of accepted submissions from a CSES account
 def get_accepted_submissions_count(account):
-
     try:
         response = requests.get(account)
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -13,40 +13,41 @@ def get_accepted_submissions_count(account):
     except:
         raise EnvironmentError("Failed to log in wrong username or password")
 
+# Function to extract the problem name from a submission
 def get_problem_name(submission):
     return submission.find('td', string='Task:').next_sibling.text
 
-
+# Function to extract problem tags from a submission
 def get_problem_tags(submission):
     return submission.find('div', class_='nav sidebar').find('h4').text
 
-
+# Function to generate a link to the problem on CSES
 def get_problem_link(submission):
     return 'https://cses.fi' + submission.find('td', string='Task:').find_next('a').get('href')
 
-
+# Function to get the submission ID from a problem
 def get_submission_id(problem):
     return problem.find('a').text.strip()
 
-
+# Function to get the programming language used in a submission
 def get_submission_language(submission):
     return submission.find('td', string='Language:').next_sibling.text
 
-
+# Function to extract the submission date and time
 def get_submission_date(submission):
     timestamp_str = submission.find('td', string='Submission time:').next_sibling.text
     timestamp = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S %z")
     return timestamp.strftime("%Y-%m-%d %H:%M")
 
-
+# Function to extract the code of a submission
 def get_submission_code(submission):
     return submission.find('pre', class_='prettyprint').text
 
-
+# Function to check if a problem is solved (has a full score)
 def check_problem_solved(problem):
     return problem.find('span', class_='task-score icon full')
 
-
+# Function to fix cascaded HTML problems
 def fix_cascaded_html(topic):
     cascaded_problems = topic.find_all('li')
     corrected_soup = BeautifulSoup("<ul></ul>", "html.parser")
@@ -56,7 +57,7 @@ def fix_cascaded_html(topic):
 
     return corrected_soup.prettify()
 
-
+# CsesScraper class
 class CsesScraper(AbstractScraper):
 
     def __init__(self, username, password, repo_owner, repo_name, access_token):
