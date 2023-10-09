@@ -1,8 +1,8 @@
-# Scraper - Detailed Documentation
+# Scraping Engine for Competitive Programming Accelerated Retriever (Secpar)
 
 ## Overview
 
-The Scraper is a Python command-line tool designed to scrape code submissions from various online programming platforms and store them in a GitHub repository. It supports platforms such as Codeforces, CSES (University of Helsinki), and Vjudge. This documentation provides a detailed overview of the Scraper's functionalities and how to use them.
+Secpar is a Python command-line tool designed to scrape code submissions from various online programming platforms and store them in a GitHub repository. It supports platforms such as Codeforces, CSES (University of Helsinki), and Vjudge. This documentation provides a detailed overview of the Scraper's functionalities and how to use them.
 
 ## Table of Contents
 
@@ -21,16 +21,16 @@ The Scraper is a Python command-line tool designed to scrape code submissions fr
 
 ## 1. Features <a name="features"></a>
 
-- **Supported Platforms**: The Scraper supports the following programming platforms:
+- **Supported Platforms**: Secpar supports the following programming platforms:
   - Codeforces
   - CSES (University of Helsinki)
   - Vjudge
 
 - **GitHub Integration**: Code submissions are stored in a GitHub repository, making it easy to manage and share your solutions.
 
-- **Automatic README Generation**: The Scraper automatically generates a README file for your GitHub repository, listing all your code submissions with problem details, links, and tags.
+- **Automatic README Generation**: Secpar automatically generates a README file for your GitHub repository, listing all your code submissions with problem details, links, and tags.
 
-- **Incremental Scraping**: The Scraper keeps track of previously scraped submissions, ensuring that only new submissions are added to your repository.
+- **Incremental Scraping**: Secpar keeps track of previously scraped submissions, ensuring that only new submissions are added to your repository.
 
 - **Authentication**: Securely authenticate with the supported platforms to access your submissions.
 
@@ -38,9 +38,9 @@ The Scraper is a Python command-line tool designed to scrape code submissions fr
 
 ## 2. Installation <a name="installation"></a>
 
-To use the Scraper, follow these installation steps:
+To use Secpar, follow these installation steps:
 
-1. **Clone the Repository**: Clone the Scraper repository to your local machine:
+1. **Clone the Repository**: Clone Secpar repository to your local machine:
 
     ```shell
     git clone https://github.com/your-username/scraper.git
@@ -64,7 +64,7 @@ To use the Scraper, follow these installation steps:
 
 ## 3. Usage <a name="usage"></a>
 
-The Scraper has two primary modes of operation: initialization and scraping.
+Secpar has two primary modes of operation: initialization and scraping.
 
 ### Initialization <a name="initialization"></a>
 
@@ -92,11 +92,11 @@ Scraping allows you to retrieve code submissions from supported platforms and st
 
 2. Depending on the platform, you may need to provide additional information such as your platform username and password.
 
-3. The Scraper will fetch new submissions and update your GitHub repository.
+3. Secpar will fetch new submissions and update your GitHub repository.
 
 ## 4. Command-Line Interface <a name="command-line-interface"></a>
 
-The Scraper provides a command-line interface with the following options:
+Secpar provides a command-line interface with the following options:
 
 - `-c`, `--command`: Specify the command (`init` for initialization or `update` for scraping).
 
@@ -113,7 +113,7 @@ python main.py -s codeforces
 
 ## 5. Scraper Configuration <a name="scraper-configuration"></a>
 
-The Scraper can be configured in several ways:
+Secpar can be configured in several ways:
 
 - **GitHub Configuration**: Set up your GitHub repository details and access token during initialization.
 
@@ -123,35 +123,35 @@ The Scraper can be configured in several ways:
 
 ## 6. Customization <a name="customization"></a>
 
-You can customize the Scraper's behavior by modifying the source code. Here are some customization options:
+You can customize Secpar's behavior by modifying the source code. Here are some customization options:
 
 - **Formatting**: Customize the formatting of the generated README for each platform. You can modify the formatting in the corresponding `Formatter` class.
 
-- **Configuration**: Adjust the scraper's settings, such as maximum requests, submissions per update, or other platform-specific parameters.
+- **Configuration**: Adjust Secpar's settings, such as maximum requests, submissions per update, or other platform-specific parameters.
 
 ## 7. Data Storage <a name="data-storage"></a>
 
-The Scraper stores code submissions and related information in your GitHub repository. Each submission is listed in the README with details such as problem name, language, solution link, tags, and submission date.
+Secpar stores code submissions and related information in your GitHub repository. Each submission is listed in the README with details such as problem name, language, solution link, tags, and submission date.
 
 ## 8. FAQs <a name="faqs"></a>
 
-- **What platforms does the Scraper support?**
-  - The Scraper currently supports Codeforces, CSES (University of Helsinki), and Vjudge.
+- **What platforms does Secpar support?**
+  - Secpar currently supports Codeforces, CSES (University of Helsinki), and Vjudge.
 
 - **Is it safe to store my GitHub access token?**
-  - Access tokens should be stored securely. The Scraper stores them in a configuration file, and it's essential to protect this file.
+  - Access tokens should be stored securely. Secpar stores them in a configuration file, and it's essential to protect this file.
 
 - **How can I customize the README format?**
   - You can customize the README format by modifying the corresponding `Formatter` class for each platform.
 
 ## 9. Contributing <a name="contributing"></a>
 
-Contributions to the Scraper are welcome! Feel free to fork the repository, make improvements, and create pull requests.
+Contributions to Secpar are welcome! Feel free to fork the repository, make improvements, and create pull requests.
 
 ## 10. License <a name="license"></a>
 
-The Scraper is released under the MIT License. See the [LICENSE](https://github.com/your-username/scraper/blob/main/LICENSE) file for details.
+Secpar is released under the MIT License. See the [LICENSE](https://github.com/your-username/scraper/blob/main/LICENSE) file for details.
 
 ---
 
-*Note: This documentation provides an overview of the Scraper's functionality and usage. For detailed code explanations, refer to the source code and comments in the Scraper's repository.*
+*Note: This documentation provides an overview of Secpar's functionality and usage. For detailed code explanations, refer to the source code and comments in Secpar's repository.*
