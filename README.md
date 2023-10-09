@@ -31,6 +31,8 @@ Secpar is a Python command-line tool designed to scrape code submissions from va
 - **Automatic README Generation**: Secpar automatically generates a README file for your GitHub repository, listing all your code submissions with problem details, links, and tags.
 
 - **Incremental Scraping**: Secpar keeps track of previously scraped submissions, ensuring that only new submissions are added to your repository.
+  
+- **Multi-account Scraping**: Scrape the same platform more than once in case of having multiple accounts on that platform without worry of redundancy.
 
 - **Authentication**: Securely authenticate with the supported platforms to access your submissions.
 
@@ -149,6 +151,9 @@ Secpar stores code submissions and related information in your GitHub repository
 Contributions to Secpar are welcome! Feel free to fork the repository, make improvements, and create pull requests.
 
 ## 10. License <a name="license"></a>
+
+## Features on the way <a name="features on the way">
+- More platforms: platforms such as Atcoder and CodeChef are currently being worked on.
 
 Secpar is released under the MIT License. See the [LICENSE](https://github.com/MostafaGalal1/Secpar/blob/main/LICENSE) file for details.
 
