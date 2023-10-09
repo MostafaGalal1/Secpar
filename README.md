@@ -18,6 +18,7 @@ Secpar is a Python command-line tool designed to scrape code submissions from va
 8. [FAQs](#faqs)
 9. [Contributing](#contributing)
 10. [License](#license)
+11. [Upcoming Feature](#upcoming-feature) 
 
 ## 1. Features <a name="features"></a>
 
@@ -152,7 +153,7 @@ Contributions to Secpar are welcome! Feel free to fork the repository, make impr
 
 ## 10. License <a name="license"></a>
 
-## Features on the way <a name="features on the way">
+## Upcoming Features <a name="upcoming-features">
 - More platforms: platforms such as Atcoder and CodeChef are currently being worked on.
 
 Secpar is released under the MIT License. See the [LICENSE](https://github.com/MostafaGalal1/Secpar/blob/main/LICENSE) file for details.
