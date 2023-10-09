@@ -150,7 +150,7 @@ Contributions to Secpar are welcome! Feel free to fork the repository, make impr
 
 ## 10. License <a name="license"></a>
 
-Secpar is released under the MIT License. See the [LICENSE](https://github.com/MostafaGalal1/secpar/blob/main/LICENSE) file for details.
+Secpar is released under the MIT License. See the [LICENSE](https://github.com/MostafaGalal1/Secpar/blob/main/LICENSE) file for details.
 
 ---
 
