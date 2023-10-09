@@ -82,11 +82,11 @@ class AbstractScraper(ABC):
             print("")
 
     def update_submission_json(self):
-        self.current_submissions = list(self.current_submissions.values())
-        self.current_submissions = sorted(self.current_submissions, key=lambda item: item['date'], reverse=True)
+        submissions = list(self.current_submissions.values())
+        submissions = sorted(submissions, key=lambda item: item['date'], reverse=True)
 
         try:
-            self.repo.update_file(f'submissions/{self.platform}Submissions.json', f"Update {self.platform}Submissions.json", json.dumps({'Header': self.platform_header, 'Submissions': self.current_submissions}), self.repo.get_contents(f'submissions/{self.platform}Submissions.json').sha)
+            self.repo.update_file(f'submissions/{self.platform}Submissions.json', f"Update {self.platform}Submissions.json", json.dumps({'Header': self.platform_header, 'Submissions': submissions}), self.repo.get_contents(f'submissions/{self.platform}Submissions.json').sha)
         except:
-            self.repo.create_file(f'submissions/{self.platform}Submissions.json', f"Create {self.platform}Submissions.json", json.dumps({'Header': self.platform_header, 'Submissions': self.current_submissions}))
+            self.repo.create_file(f'submissions/{self.platform}Submissions.json', f"Create {self.platform}Submissions.json", json.dumps({'Header': self.platform_header, 'Submissions': submissions}))
             sleep(2)

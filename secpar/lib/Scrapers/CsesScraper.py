@@ -75,7 +75,7 @@ class CsesScraper(AbstractScraper):
 
     def login(self):
         login_url = 'https://cses.fi/login'
-        response = self.session.get(login_url, headers=self.headers)
+        response = self.session.get(login_url, verify=False, headers=self.headers, timeout=20)
         soup = BeautifulSoup(response.text, 'html.parser')
         self.credits['csrf_token'] = soup.find('input', {'name': 'csrf_token'})['value']
         response = self.session.post(login_url, self.credits)
@@ -83,29 +83,31 @@ class CsesScraper(AbstractScraper):
 
     def get_submissions(self):
         user_submissions_url = 'https://cses.fi/problemset'
-        response = self.session.get(user_submissions_url, verify=False, headers=self.headers)
+        response = self.session.get(user_submissions_url, verify=False, headers=self.headers, timeout=20)
         soup = BeautifulSoup(response.text, 'html.parser')
         topics = soup.find_all('ul', class_='task-list')
         account = 'https://cses.fi' + soup.find('a', class_='account').get('href')
-        end = get_accepted_submissions_count(account)
+
+        submissions_per_update = 100
         progress_count = 0
+        end = get_accepted_submissions_count(account)
 
         for topic in topics:
             topic = fix_cascaded_html(topic)
             soup = BeautifulSoup(topic, 'html.parser')
             problems = soup.find_all('li', class_='task')
+
             for problem in problems:
                 if check_problem_solved(problem):
-                    if self.check_already_added(get_submission_id(problem)):
-                        end -= 1
-                        continue
-                    self.print_progress_bar(progress_count + 1, end)
                     progress_count += 1
+                    self.print_progress_bar(progress_count, end)
+                    if self.check_already_added(get_submission_id(problem)):
+                        continue
                     submission = self.get_submission_html(problem)
                     self.push_code(submission)
                     self.update_already_added(submission)
-                if progress_count % 100 == 0:
-                    self.update_submission_json()
+                    if progress_count % submissions_per_update == 0:
+                        self.update_submission_json()
 
     def push_code(self, submission):
         name = get_problem_name(submission)
@@ -131,7 +133,7 @@ class CsesScraper(AbstractScraper):
                                                'tags': f'{tags}', 'date': date}
 
     def get_submission_html(self, problem):
-        response = self.session.get('https://cses.fi' + problem.find('a').get('href'))
+        response = self.session.get('https://cses.fi' + problem.find('a').get('href'), verify=False, headers=self.headers, timeout=20)
         soup = BeautifulSoup(response.text, 'html.parser')
         submission_link = soup.find('h4', string='Your submissions').find_next_sibling('a')
         while not submission_link.find('span', class_='task-score icon full'):
@@ -139,11 +141,11 @@ class CsesScraper(AbstractScraper):
         else:
             submission_link = submission_link.find('span', class_='task-score icon full').parent.get('href')
 
-        response = self.session.get('https://cses.fi' + submission_link)
+        response = self.session.get('https://cses.fi' + submission_link, verify=False, headers=self.headers, timeout=20)
         return BeautifulSoup(response.text, 'html.parser')
 
     def generate_directory_link(self, submission):
         name = get_problem_name(submission)
         topic = get_problem_tags(submission)
         language = get_submission_language(submission)
-        return f'{self.platform}/{topic}/{name}.{self.extensions[language]}'.replace(' ', '_')
+        return f'{self.platform.upper()}/{topic}/{name}.{self.extensions[language]}'.replace(' ', '_')

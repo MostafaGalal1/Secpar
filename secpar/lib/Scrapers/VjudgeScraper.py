@@ -2,7 +2,6 @@ import requests
 from datetime import datetime
 from secpar.lib.Scrapers.AbstractScraper import AbstractScraper
 
-
 def get_problem_number(submission):
     return submission.get('probNum')
 
@@ -11,7 +10,7 @@ def get_problem_hashkey(submission):
 
 def get_problem_name(submission):
     problem_number = get_problem_number(submission)
-    response = requests.get(f'https://vjudge.net/problem/data?draw=0&start=0&length=20&OJId=All&probNum={problem_number}&source=&category=all')
+    response = requests.get(f'https://vjudge.net/problem/data?draw=0&start=0&length=20&OJId=All&probNum={problem_number}&source=&category=all', verify=False, timeout=20)
     return response.json().get("data")[0].get('title')
 
 
@@ -68,49 +67,51 @@ class VjudgeScraper(AbstractScraper):
         response = self.session.post(login_url, self.credits)
         return response.text == 'success'
 
-    def get_accepted_submissions_count(slef, submissions):
+    def get_accepted_submissions_count(self, submissions):
         count = 0
         for platform in submissions:
             for submission in submissions.get(platform):
-                if not slef.check_already_added(platform+submission):
+                if not self.check_already_added(platform+submission):
                     count += 1
         return count
 
-    def get_submissions(self):
-        try:
-            user_submissions_url = f'https://vjudge.net/user/solveDetail/{self.username}'
-            response = self.session.get(user_submissions_url, verify=False, headers=self.headers)
-            submissions = response.json().get("acRecords")
-        except:
-            raise EnvironmentError("Failed to log in wrong username or password")
-
-        end = self.get_accepted_submissions_count(submissions)
-        progress_count = 0
-
+    def get_new_submissions(self):
         submissions_per_page = 20
         page_count = 0
+        new_submissions = []
+        submissions_hash = {}
 
         while True:
             page_submissions = self.get_page_submissions(page_count, submissions_per_page)
-            if not page_submissions:
+            if len(page_submissions) == 0:
                 break
             for submission in page_submissions:
                 problem_key = get_problem_hashkey(submission)
-                if self.check_already_added(problem_key):
-                    continue
-                self.print_progress_bar(progress_count + 1, end)
-                progress_count += 1
-                self.push_code(submission)
-                self.update_already_added(submission)
-
-                if progress_count % 100 == 0:
-                    self.update_submission_json()
-
+                if problem_key not in submissions_hash and not self.check_already_added(problem_key):
+                    new_submissions.append(submission)
+                    submissions_hash[problem_key] = True
             page_count += 1
+
+        return new_submissions
+
+    def get_submissions(self):
+        submissions_per_update = 100
+        progress_count = 0
+        new_submissions = self.get_new_submissions()
+        end = len(new_submissions)
+
+        for submission in new_submissions:
+            progress_count += 1
+            self.print_progress_bar(progress_count, end)
+            self.push_code(submission)
+            self.update_already_added(submission)
+
+            if progress_count % submissions_per_update == 0:
+                self.update_submission_json()
 
     def get_page_submissions(self, page, submissions_per_page):
         response = self.session.get(f'https://vjudge.net/status/data?draw={page}&start={page * submissions_per_page}'
-                                    f'&length=20&un={self.username}&OJId=All&res=1&orderBy=run_id')
+                                    f'&length=20&un={self.username}&OJId=All&res=1&orderBy=run_id', verify=False, headers=self.headers, timeout=20)
         return response.json().get("data")
 
     def push_code(self, submission):
@@ -139,7 +140,7 @@ class VjudgeScraper(AbstractScraper):
 
     def get_submission_html(self, submission):
         submission_url = get_submission_url(submission)
-        response = self.session.get(submission_url)
+        response = self.session.get(submission_url, verify=False, headers=self.headers, timeout=20)
         return response.json()
 
     def generate_directory_link(self, submission):

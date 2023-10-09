@@ -8,7 +8,7 @@ from ..Formatters.VjudgeFormatter import VjudgeFormatter
 
 class ReadMeBuilder():
     def __init__(self, data):
-        self.platforms = {"Cses","Codeforces","Vjudge"}
+        self.platforms = ["Codeforces", "Cses", "Vjudge"]
         git = Github(data.get("access_token"))
         self.repo = git.get_user(data.get("repo_owner")).get_repo(data.get("repo_name"))
 

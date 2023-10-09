@@ -1,5 +1,3 @@
-from time import sleep
-
 from stem import Signal
 from stem.control import Controller
 import requests
@@ -10,6 +8,7 @@ from secpar.lib.Scrapers.AbstractScraper import AbstractScraper
 CONTROL_PORT = 9051
 SOCKS_PORT = 9050
 MAX_REQUESTS = 8
+SUBMISSIONS_PER_UPDATE = 100
 
 
 def get_tor_session():
@@ -109,34 +108,35 @@ class CodeforcesScraper(AbstractScraper):
 
     def get_new_submissions(self, submissions):
         new_submissions = []
-        submissions_hash = set()
+        submissions_hash = {}
 
         for submission in submissions:
             if is_valid_submission(submission):
                 problem_key = get_problem_hashkey(submission)
                 if problem_key not in submissions_hash and not self.check_already_added(problem_key):
                     new_submissions.append(submission)
-                    submissions_hash.add(problem_key)
+                    submissions_hash[problem_key] = True
 
         return new_submissions
 
     def get_submissions(self):
         user_submissions_url = f'https://codeforces.com/api/user.status?handle={self.username}'
-        response = self.session.get(user_submissions_url, verify=False, headers=self.headers)
+        response = self.session.get(user_submissions_url, verify=False, headers=self.headers, timeout=20)
         submissions = response.json().get("result")
 
+        submissions_per_update = 100
+        progress_count = 0
         new_submissions = self.get_new_submissions(submissions)
         end = len(new_submissions)
-        progress_count = 0
 
         for submission in new_submissions:
-
-            self.print_progress_bar(progress_count + 1, end)
             progress_count += 1
-            if self.use_tor: self.push_code(submission)
+            self.print_progress_bar(progress_count, end)
+            if self.use_tor:
+                self.push_code(submission)
             self.update_already_added(submission)
 
-            if progress_count % 100 == 0 :
+            if progress_count % submissions_per_update == 0:
                 self.update_submission_json()
 
     def push_code(self, submission):
@@ -177,7 +177,7 @@ class CodeforcesScraper(AbstractScraper):
                 renew_connection()
                 self.request_count = 0
             try:
-                response = self.session.get(submission_url, verify=False, headers=self.headers)
+                response = self.session.get(submission_url, verify=False, headers=self.headers, timeout=20)
                 if response.status_code == 200:
                     return BeautifulSoup(response.text, 'html.parser')
             except Exception as e:
