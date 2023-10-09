@@ -33,7 +33,7 @@ Secpar is a Python command-line tool designed to scrape code submissions from va
 
 - **Incremental Scraping**: Secpar keeps track of previously scraped submissions, ensuring that only new submissions are added to your repository.
   
-- **Multi-account Scraping**: Scrape the same platform more than once in case of having multiple accounts on that platform without worry of redundancy.
+- **Multi-accounts Scraping**: Scrape the same platform more than once in case of having multiple accounts on that platform without worry of redundancy.
 
 - **Authentication**: Securely authenticate with the supported platforms to access your submissions.
 
