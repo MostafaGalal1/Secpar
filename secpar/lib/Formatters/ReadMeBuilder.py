@@ -36,10 +36,14 @@ class ReadMeBuilder():
             print("README.md created.")
 
     def build(self):
-        readme_content = ""
+        readme_content = "Submissions\n======================\n> *Auto-generated with ❤ using [Secpar](https://github.com/MostafaGalal1/Secpar)*\n\n## Introduction\n\nA repository to keep track of problem solving practice, containing solutions from platforms:\n\n"
+
         for platform in self.platforms:
             # Generate formatted content for each platform and append it to the overall readme content.
-            readme_content += self.get_formatter(platform).format()
+            formatted_platform_content = self.get_formatter(platform).format()
+            readme_content += f"\n\n### {platform}\n"
+            readme_content += formatted_platform_content
+
         return readme_content
 
 # End of the 'ReadMeBuilder' class definition.
