@@ -20,11 +20,11 @@ def parse_args():
         help="Choose a command: init"
     )
 
-    # Add arguments for the "scrap" option (-s or --scrap).
+    # Add arguments for the "scrape" option (-s or --scrape).
     platform_group.add_argument(
         "-s",
-        "--scrap",
-        choices=["codeforces", "cses", "vjudge"],  # Specify valid choices for the "scrap" argument.
+        "--scrape",
+        choices=["codeforces", "cses", "vjudge"],  # Specify valid choices for the "scrape" argument.
         type=str,
         help="Specify the platform name (codeforces, cses, or vjudge)"
     )
@@ -32,9 +32,9 @@ def parse_args():
     # Parse the command-line arguments.
     args = parser.parse_args()
 
-    # Check if both "scrap" and "command" options are provided, which is invalid.
-    if args.scrap and args.command:
-        parser.error("The --scrap option should be used alone, without specifying --command.")
+    # Check if both "scrape" and "command" options are provided, which is invalid.
+    if args.scrape and args.command:
+        parser.error("The --scrape option should be used alone, without specifying --command.")
 
     return args  # Return the parsed arguments.
 
