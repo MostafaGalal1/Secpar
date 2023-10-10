@@ -4,6 +4,8 @@
 
 Secpar is a Python command-line tool designed to scrape code submissions from various online programming platforms and store them in a GitHub repository. It supports platforms such as Codeforces, CSES (University of Helsinki), and Vjudge. This documentation provides a detailed overview of the Scraper's functionalities and how to use them.
 
+#### Demo Repo: [CP-Submissions](https://github.com/MostafaGalal1/CP-Submissions)
+
 ## Table of Contents
 
 1. [Features](#features)
