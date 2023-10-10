@@ -22,3 +22,4 @@ class ScraperFactory:
         else:
             # Raise an error if the provided scraper name is unsupported
             raise ValueError(f"Unsupported scraper name: {self.scraper_name}")
+
