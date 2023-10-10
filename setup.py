@@ -9,7 +9,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = fh.read()
 
-VERSION = '1.0.6'
+VERSION = '1.0.0'
 DESCRIPTION = 'Scrape problems submissions from different platforms'
 
 # Define the authors
