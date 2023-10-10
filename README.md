@@ -20,7 +20,7 @@ Secpar is a Python command-line tool designed to scrape code submissions from va
 8. [FAQs](#faqs)
 9. [Contributing](#contributing)
 10. [License](#license)
-11. [Upcoming Feature](#upcoming-feature) 
+11. [Upcoming Features](#upcoming-features) 
 
 ## 1. Features <a name="features"></a>
 
@@ -45,39 +45,11 @@ Secpar is a Python command-line tool designed to scrape code submissions from va
 
 To use Secpar, follow these installation steps:
 
-1. **Install Secpar**: Install Secpar package on your local machine:
-
-    ```shell
-    pip install Secpar
-    ```
-
-2. **Secpar -h**: Use Secpar help to view all valid commands:
-
-    ```shell
-    Secpar -h
-    ```
-
-3. **Initialization**: Follow the prompts to provide your GitHub username, repository name and the access token
-
-    ```shell
-    Secpar -c init
-    ```
-
-4. **Scraping**: Choose the platform to be scraped:
-
-    ```shell
-    Secpar -s codeforces
-    ```
-
-### Note:
-To upload submissions codes for codeforces you need to have tor installed and inside your torrc file place these two line:
+**Install Secpar**: Install Secpar package on your local machine:
 
 ```shell
-SocksPort 9050
-ControlPort 9051
+pip install Secpar
 ```
-
-Open tor tab and make sure you can browse using it and keep it open till you scrape using the terminal.
 
 ## 3. Usage <a name="usage"></a>
 
@@ -102,14 +74,24 @@ Scraping allows you to retrieve code submissions from supported platforms and st
 1. To scrape submissions, use the following command:
 
     ```shell
-    python main.py -s PLATFORM_NAME
+    Secpar -s PLATFORM_NAME
     ```
 
     Replace `PLATFORM_NAME` with one of the supported platforms: `codeforces`, `cses`, or `vjudge`.
 
-2. Depending on the platform, you may need to provide additional information such as your platform username and password.
+2. Depending on the platform, you may need to provide additional information such as your platform password.
 
 3. Secpar will fetch new submissions and update your GitHub repository.
+
+### Note:
+To upload submissions codes for codeforces you need to have tor installed and inside your torrc file place these two line:
+
+```shell
+SocksPort 9050
+ControlPort 9051
+```
+
+Open tor tab and make sure you can browse using it and keep it open till you scrape using the terminal.
 
 ## 4. Command-Line Interface <a name="command-line-interface"></a>
 
@@ -117,9 +99,9 @@ Secpar provides a command-line interface with the following options:
 
 - `-c`, `--command`: Specify the command (`init` for initialization or `update` for scraping).
 
-- `-s`, `--scrap`: Specify the platform to scrape data from (`codeforces`, `cses`, or `vjudge`).
+- `-s`, `--scrape`: Specify the platform to scrape data from (`codeforces`, `cses`, or `vjudge`).
 
-- `--help`: Display usage instructions and available options.
+- `-h`, `--help`: Display usage instructions and available options.
 
 Example usage:
 
