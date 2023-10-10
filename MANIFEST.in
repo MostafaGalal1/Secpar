@@ -1,3 +1,2 @@
 include LICENSE
-recursive-include secpar/lib/ *.py *.json
-
+recursive-include secpar/lib *

@@ -29,8 +29,9 @@ setup(
     description=DESCRIPTION,
     long_description_content_type="text/markdown",
     long_description=long_description,
-    include_package_data=True,
     packages=find_packages(),
+    package_data={'secpar': ['*.json', '*.py']},
+    include_package_data=True,
     license="MIT",
     entry_points={
         "console_scripts": ['secpar = secpar.__main__:main']
