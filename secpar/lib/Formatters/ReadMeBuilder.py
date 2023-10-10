@@ -8,7 +8,7 @@ from ..Formatters.VjudgeFormatter import VjudgeFormatter
 class ReadMeBuilder():
     def __init__(self, data):
         # List of supported platforms.
-        self.platforms = ["Codeforces", "Cses", "Vjudge"]
+        self.platforms = ["Codeforces", "CSES", "Vjudge"]
 
         # Create a GitHub instance using the provided access token.
         git = Github(data.get("access_token"))
@@ -16,10 +16,10 @@ class ReadMeBuilder():
 
     def get_formatter(self, name):
         # Return the appropriate formatter based on the platform name.
-        if name == "Cses":
-            return CsesFormatter(self.repo)
-        elif name == "Codeforces":
+        if name == "Codeforces":
             return CodeforcesFormatter(self.repo)
+        elif name == "CSES":
+            return CsesFormatter(self.repo)
         elif name == "Vjudge":
             return VjudgeFormatter(self.repo)
 
@@ -32,17 +32,24 @@ class ReadMeBuilder():
             print("README.md updated.")
         except Exception as e:
             # If the README doesn't exist, create it.
-            self.repo.create_file(readme_path, "Create README.md", readme_content)
+            self.repo.create_file(readme_path, "Create README.md", readme_content, 'main')
             print("README.md created.")
 
     def build(self):
-        readme_content = "Submissions\n======================\n> *Auto-generated with ❤ using [Secpar](https://github.com/MostafaGalal1/Secpar)*\n\n## Introduction\n\nA repository to keep track of problem solving practice, containing solutions from platforms:\n\n"
+        readme_intro = "Submissions\n======================\n\n> *Auto-generated using [Secpar](https://github.com/MostafaGalal1/Secpar)*\n\n"
+        table_of_platforms = "## Platforms\n"
+        readme_content = ""
 
         for platform in self.platforms:
             # Generate formatted content for each platform and append it to the overall readme content.
             formatted_platform_content = self.get_formatter(platform).format()
+            if len(formatted_platform_content) != 0:
+                table_of_platforms += f"* [{platform}](#{platform.lower()})\n"
             readme_content += formatted_platform_content
 
+        table_of_platforms += '\n'
+        readme_content += '\n'
+        readme_content = readme_intro + table_of_platforms + readme_content
         return readme_content
 
 # End of the 'ReadMeBuilder' class definition.

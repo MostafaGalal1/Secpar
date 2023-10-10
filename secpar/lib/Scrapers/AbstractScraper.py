@@ -43,7 +43,8 @@ class AbstractScraper(ABC):
         # Perform the scraping workflow by calling various methods
         self.load_extensions()
         self.load_already_added()
-        self.login()
+        if not self.login():
+            return
         self.get_submissions()
         self.update_submission_json()
 
@@ -93,8 +94,6 @@ class AbstractScraper(ABC):
     def print_progress_bar(progress, end):
         # Print a progress bar with percentage
         print("[{0}{1}] {2}%    ".format("█" * int((progress/end)*50), "-" * int(50-(progress/end)*50), int((progress/end)*100)), end="\r")
-        if progress == end:
-            print("")
 
     def update_submission_json(self):
         # Update the JSON file in the repository with the latest submissions
@@ -103,10 +102,11 @@ class AbstractScraper(ABC):
 
         try:
             # Update the file if it exists
+            self.repo.get_contents(f'submissions/{self.platform}Submissions.json')
             self.repo.update_file(f'submissions/{self.platform}Submissions.json', f"Update {self.platform}Submissions.json", json.dumps({'Header': self.platform_header, 'Submissions': submissions}), self.repo.get_contents(f'submissions/{self.platform}Submissions.json').sha)
         except:
             # Create the file if it doesn't exist
-            self.repo.create_file(f'submissions/{self.platform}Submissions.json', f"Create {self.platform}Submissions.json", json.dumps({'Header': self.platform_header, 'Submissions': submissions}))
+            self.repo.create_file(f'submissions/{self.platform}Submissions.json', f"Create {self.platform}Submissions.json", json.dumps({'Header': self.platform_header, 'Submissions': submissions}), 'main')
             sleep(2)
 
 # You can now create subclasses of AbstractScraper and implement the abstract methods for specific scraping tasks.

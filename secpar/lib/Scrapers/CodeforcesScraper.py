@@ -99,7 +99,7 @@ class CodeforcesScraper(AbstractScraper):
 
     def __init__(self, user_name, repo_owner, repo_name, access_token, use_tor=False):
         self.platform = 'Codeforces'
-        self.platform_header = '''## Codeforces
+        self.platform_header = '''## Codeforces<a name="codeforces"></a>
 | # | Problem | Solution | Tags | Submitted |
 | - |  -----  | -------- | ---- | --------- |\n'''
         super().__init__(self.platform, user_name, '', repo_owner, repo_name, access_token, self.platform_header)
@@ -109,7 +109,7 @@ class CodeforcesScraper(AbstractScraper):
         self.request_count = 0
 
     def login(self):
-        pass  # Placeholder for potential login functionality (currently empty)
+        return True
 
     def get_new_submissions(self, submissions):
         new_submissions = []
@@ -120,8 +120,8 @@ class CodeforcesScraper(AbstractScraper):
                 continue
             problem_key = get_problem_hashkey(submission)
             if self.use_tor and self.check_already_added(problem_key):
-                problem_link = self.current_submissions.get(problem_key)
-                if problem_link == get_submission_link(submission):
+                problem_link = self.current_submissions.get(problem_key).get('directory_link')
+                if problem_link != self.repo.html_url + '/blob/main/' + self.generate_directory_link(submission):
                     self.current_submissions.pop(problem_key)
             if problem_key not in submissions_hash and not self.check_already_added(problem_key):
                 new_submissions.append(submission)
@@ -149,6 +149,8 @@ class CodeforcesScraper(AbstractScraper):
 
             if progress_count % submissions_per_update == 0:
                 self.update_submission_json()
+        self.print_progress_bar(1, 1)
+        print("")
 
     # Function to push the code of a submission to a GitHub repository
     def push_code(self, submission):
@@ -159,7 +161,7 @@ class CodeforcesScraper(AbstractScraper):
         if code is not None:
             directory = self.generate_directory_link(submission)
             try:
-                self.repo.create_file(directory, f"Add problem `{name}`", code)
+                self.repo.create_file(directory, f"Add problem `{name}`", code, 'main')
             except:
                 pass
 

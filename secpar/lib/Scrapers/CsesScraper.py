@@ -62,7 +62,7 @@ class CsesScraper(AbstractScraper):
 
     def __init__(self, username, password, repo_owner, repo_name, access_token):
         self.platform = 'Cses'
-        self.platform_header = '''## CSES
+        self.platform_header = '''## CSES<a name="cses"></a>
 | # | Problem | Solution | Tags | Submitted |
 | - |  -----  | -------- | ---- | --------- |\n'''
         super().__init__(self.platform, username, password, repo_owner, repo_name, access_token, self.platform_header)
@@ -109,6 +109,8 @@ class CsesScraper(AbstractScraper):
                     self.update_already_added(submission)
                     if progress_count % submissions_per_update == 0:
                         self.update_submission_json()
+        self.print_progress_bar(1, 1)
+        print("")
 
     def push_code(self, submission):
         name = get_problem_name(submission)
@@ -117,7 +119,7 @@ class CsesScraper(AbstractScraper):
         if code is not None:
             directory = self.generate_directory_link(submission)
             try:
-                self.repo.create_file(directory, f"Add problem {name}", code)
+                self.repo.create_file(directory, f"Add problem {name}", code, 'main')
             except:
                 pass
 

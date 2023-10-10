@@ -10,11 +10,6 @@ def get_problem_number(submission):
 def get_problem_hashkey(submission):
     return submission.get('oj') + submission.get('probNum')
 
-# Function to get the problem name from a submission
-def get_problem_name(submission):
-    problem_number = get_problem_number(submission)
-    response = requests.get(f'https://vjudge.net/problem/data?draw=0&start=0&length=20&OJId=All&probNum={problem_number}&source=&category=all', verify=False, timeout=20)
-    return response.json().get("data")[0].get('title')
 
 # Function to get the name of the online judge (OJ) from a submission
 def get_oj_name(submission):
@@ -53,7 +48,7 @@ class VjudgeScraper(AbstractScraper):
 
     def __init__(self, username, password, repo_owner, repo_name, access_token):
         self.platform = 'Vjudge'
-        self.platform_header = '''## vjudge
+        self.platform_header = '''## Vjudge<a name="vjudge"></a>
 | # | Problem | Solution | Submitted |
 | - |  -----  | -------- | --------- |\n'''
         super().__init__(self.platform, username, password, repo_owner, repo_name, access_token, self.platform_header)
@@ -114,6 +109,15 @@ class VjudgeScraper(AbstractScraper):
 
             if progress_count % submissions_per_update == 0:
                 self.update_submission_json()
+        self.print_progress_bar(1, 1)
+        print("")
+
+    def get_problem_name(self, submission):
+        problem_number = get_problem_number(submission)
+        response = self.session.get(
+            f'https://vjudge.net/problem/data?draw=0&start=0&length=20&OJId=All&probNum={problem_number}&source=&category=all',
+            verify=False, timeout=20)
+        return response.json().get("data")[0].get('title')
 
     def get_page_submissions(self, page, submissions_per_page):
         response = self.session.get(f'https://vjudge.net/status/data?draw={page}&start={page * submissions_per_page}'
@@ -123,20 +127,20 @@ class VjudgeScraper(AbstractScraper):
     # Function to push code to the repository
     def push_code(self, submission):
         submission_html = self.get_submission_html(submission)
-        name = get_problem_name(submission_html)
+        name = self.get_problem_name(submission_html)
         code = get_submission_code(submission_html)
 
         if code is not None:
             directory = self.generate_directory_link(submission)
             try:
-                self.repo.create_file(directory, f"Add problem `{name}`", code)
+                self.repo.create_file(directory, f"Add problem `{name}`", code, 'main')
             except:
                 pass
 
     # Function to update the record of already added submissions
     def update_already_added(self, submission):
         problem_key = get_problem_hashkey(submission)
-        name = get_problem_name(submission)
+        name = self.get_problem_name(submission)
         problem_link = get_problem_link(submission)
         directory_link = self.repo.html_url + '/blob/main/' + self.generate_directory_link(submission)
         language = get_submission_language(submission)
