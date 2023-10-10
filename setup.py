@@ -9,7 +9,7 @@ here = os.path.abspath(os.path.dirname(__file__))
 with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = fh.read()
 
-VERSION = '1.0.1'
+VERSION = '1.0.5'
 DESCRIPTION = 'Scrape problems submissions from different platforms'
 
 # Define the authors
@@ -29,8 +29,8 @@ setup(
     description=DESCRIPTION,
     long_description_content_type="text/markdown",
     long_description=long_description,
-    packages=find_packages(),
     include_package_data=True,
+    packages=find_packages(),
     license="MIT",
     entry_points={
         "console_scripts": ['secpar = secpar.__main__:main']
