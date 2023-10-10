@@ -7,7 +7,7 @@ from secpar.lib.Scrapers.ScraperFactory import ScraperFactory
 from secpar.lib.Formatters.ReadMeBuilder import ReadMeBuilder
 
 
-class ScrapCommand(AbstractCommand):
+class ScrapeCommand(AbstractCommand):
     def __init__(self, scraper_name):
         self.scraper_name = scraper_name.lower()
         self.path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Resources", "User", "UserData.json")

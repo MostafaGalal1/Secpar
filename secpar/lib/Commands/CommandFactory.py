@@ -1,7 +1,7 @@
 # Import necessary modules.
 import os
 from secpar.lib.Commands.InitCommand import InitCommand
-from secpar.lib.Commands.ScrapeCommand import ScrapCommand
+from secpar.lib.Commands.ScrapeCommand import ScrapeCommand
 from secpar.lib.Commands.AbstractCommand import AbstractCommand
 
 # Define a class called 'CommandFactory' responsible for creating command objects.
@@ -14,7 +14,7 @@ class CommandFactory:
         if self.input_data.command == "init":
             return InitCommand()  # Return an 'InitCommand' object if the command is 'init'.
         elif self.input_data.scrape is not None:
-            return ScrapCommand(self.input_data.scrap)  # Return a 'ScrapCommand' object if 'scrap' is not None.
+            return ScrapeCommand(self.input_data.scrape)  # Return a 'ScrapCommand' object if 'scrap' is not None.
         elif self.input_data.command is None:
             # If 'command' is None, check if a specific file exists and provide feedback to the user.
             path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "Resources", "User", "UserData.json")

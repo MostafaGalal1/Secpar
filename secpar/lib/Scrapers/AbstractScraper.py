@@ -43,10 +43,11 @@ class AbstractScraper(ABC):
         # Perform the scraping workflow by calling various methods
         self.load_extensions()
         self.load_already_added()
-        if not self.login():
-            return
-        self.get_submissions()
-        self.update_submission_json()
+        if self.login():
+            self.get_submissions()
+            self.update_submission_json()
+        else:
+            print("Login failed, please try again")
 
     def load_extensions(self):
         # Load extensions from a JSON file

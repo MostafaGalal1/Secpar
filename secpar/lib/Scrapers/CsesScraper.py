@@ -5,13 +5,10 @@ from secpar.lib.Scrapers.AbstractScraper import AbstractScraper
 
 # Function to get the count of accepted submissions from a CSES account
 def get_accepted_submissions_count(account):
-    try:
         response = requests.get(account)
         soup = BeautifulSoup(response.text, 'html.parser')
         table = soup.findAll('table', class_='narrow')[1]
         return int(table.find('a').text)
-    except:
-        raise EnvironmentError("Failed to log in wrong username or password")
 
 # Function to extract the problem name from a submission
 def get_problem_name(submission):
