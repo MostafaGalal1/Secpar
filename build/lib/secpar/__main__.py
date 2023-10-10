@@ -1,5 +1,5 @@
-from secpar.lib.Input.args import *
-from secpar.lib.Commands.CommandFactory import *
+from .lib.Input.args import *
+from .lib.Commands.CommandFactory import *
 
 if __name__ == "__main__":
 

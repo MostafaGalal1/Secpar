@@ -1,6 +1,6 @@
-from .CsesScraper import CsesScraper
-from .CodeforcesScraper import CodeforcesScraper
-from .VjudgeScraper import VjudgeScraper
+from secpar.lib.Scrapers.CsesScraper import CsesScraper
+from secpar.lib.Scrapers.CodeforcesScraper import CodeforcesScraper
+from secpar.lib.Scrapers.VjudgeScraper import VjudgeScraper
 
 # Factory class to create scraper instances based on the provided scraper name
 class ScraperFactory:

@@ -1,8 +1,8 @@
 # Import necessary modules.
 import os
-from .InitCommand import InitCommand
-from .ScrapeCommand import ScrapCommand
-from .AbstractCommand import AbstractCommand
+from secpar.lib.Commands.InitCommand import InitCommand
+from secpar.lib.Commands.ScrapeCommand import ScrapCommand
+from secpar.lib.Commands.AbstractCommand import AbstractCommand
 
 # Define a class called 'CommandFactory' responsible for creating command objects.
 class CommandFactory:

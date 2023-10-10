@@ -1,5 +1,5 @@
 # Import the base class 'AbstractFormatter'.
-from .AbstractFormatter import AbstractFormatter
+from secpar.lib.Formatters.AbstractFormatter import AbstractFormatter
 
 # Define a concrete formatter class 'VjudgeFormatter' that inherits from 'AbstractFormatter'.
 class VjudgeFormatter(AbstractFormatter):

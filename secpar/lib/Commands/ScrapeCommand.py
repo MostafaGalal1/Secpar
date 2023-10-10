@@ -2,9 +2,9 @@ import os
 import json
 import getpass
 
-from .AbstractCommand import *
-from ..Scrapers.ScraperFactory import ScraperFactory
-from ..Formatters.ReadMeBuilder import ReadMeBuilder
+from secpar.lib.Commands.AbstractCommand import *
+from secpar.lib.Scrapers.ScraperFactory import ScraperFactory
+from secpar.lib.Formatters.ReadMeBuilder import ReadMeBuilder
 
 
 class ScrapCommand(AbstractCommand):

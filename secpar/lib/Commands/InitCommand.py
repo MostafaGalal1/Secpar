@@ -1,7 +1,7 @@
 # Import necessary modules.
 import os
 import json
-from .AbstractCommand import AbstractCommand
+from secpar.lib.Commands.AbstractCommand import AbstractCommand
 
 # Define a class called 'InitCommand' that inherits from 'AbstractCommand'.
 class InitCommand(AbstractCommand):

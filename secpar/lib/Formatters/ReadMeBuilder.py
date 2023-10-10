@@ -1,8 +1,8 @@
 # Import necessary modules.
 from github import Github
-from ..Formatters.CodeforcesFormatter import CodeforcesFormatter
-from ..Formatters.CsesFormatter import CsesFormatter
-from ..Formatters.VjudgeFormatter import VjudgeFormatter
+from secpar.lib.Formatters.CodeforcesFormatter import CodeforcesFormatter
+from secpar.lib.Formatters.CsesFormatter import CsesFormatter
+from secpar.lib.Formatters.VjudgeFormatter import VjudgeFormatter
 
 # Define a class called 'ReadMeBuilder'.
 class ReadMeBuilder():

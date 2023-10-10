@@ -46,7 +46,7 @@ setup(
     keywords=['CP', 'scraper', 'secpar', 'problem solving', 'python', 'tools'],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
-        "Intended Audience :: Developers",
+        "Intended Audience :: End Users/Desktop",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
