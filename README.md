@@ -45,27 +45,39 @@ Secpar is a Python command-line tool designed to scrape code submissions from va
 
 To use Secpar, follow these installation steps:
 
-1. **Clone the Repository**: Clone Secpar repository to your local machine:
+1. **Install Secpar**: Install Secpar package on your local machine:
 
     ```shell
-    git clone https://github.com/your-username/scraper.git
+    pip install Secpar
     ```
 
-2. **Install Dependencies**: Install the necessary Python dependencies by navigating to the repository directory and running:
+2. **Secpar -h**: Use Secpar help to view all valid commands:
 
     ```shell
-    pip install -r requirements.txt
+    Secpar -h
     ```
 
-3. **Configuration**: Set up your GitHub repository and obtain a GitHub access token.
-
-4. **Initialize**: Run the initialization command to set up your user data and repository configuration:
+3. **Initialization**: Follow the prompts to provide your GitHub username, repository name and the access token
 
     ```shell
-    python main.py -c init
+    Secpar -c init
     ```
 
-    Follow the prompts to provide your GitHub username, repository name, and access token.
+4. **Scraping**: Choose the platform to be scraped:
+
+    ```shell
+    Secpar -s codeforces
+    ```
+
+### Note:
+To upload submissions codes for codeforces you need to have tor installed and inside your torrc file place these two line:
+
+```shell
+SocksPort 9050
+ControlPort 9051
+```
+
+Open tor tab and make sure you can browse using it and keep it open till you scrape using the terminal.
 
 ## 3. Usage <a name="usage"></a>
 
