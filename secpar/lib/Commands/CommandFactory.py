@@ -13,7 +13,7 @@ class CommandFactory:
         # Check the 'command' attribute in the input data to determine the type of command to create.
         if self.input_data.command == "init":
             return InitCommand()  # Return an 'InitCommand' object if the command is 'init'.
-        elif self.input_data.scrap is not None:
+        elif self.input_data.scrape is not None:
             return ScrapCommand(self.input_data.scrap)  # Return a 'ScrapCommand' object if 'scrap' is not None.
         elif self.input_data.command is None:
             # If 'command' is None, check if a specific file exists and provide feedback to the user.
