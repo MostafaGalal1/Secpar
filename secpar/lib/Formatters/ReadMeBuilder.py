@@ -41,7 +41,6 @@ class ReadMeBuilder():
         for platform in self.platforms:
             # Generate formatted content for each platform and append it to the overall readme content.
             formatted_platform_content = self.get_formatter(platform).format()
-            readme_content += f"\n\n### {platform}\n"
             readme_content += formatted_platform_content
 
         return readme_content

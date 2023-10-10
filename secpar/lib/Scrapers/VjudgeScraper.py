@@ -100,6 +100,21 @@ class VjudgeScraper(AbstractScraper):
         return new_submissions
 
     # Function to retrieve submissions from a specific page
+    def get_submissions(self):
+        submissions_per_update = 100
+        progress_count = 0
+        new_submissions = self.get_new_submissions()
+        end = len(new_submissions)
+
+        for submission in new_submissions:
+            progress_count += 1
+            self.print_progress_bar(progress_count, end)
+            self.push_code(submission)
+            self.update_already_added(submission)
+
+            if progress_count % submissions_per_update == 0:
+                self.update_submission_json()
+
     def get_page_submissions(self, page, submissions_per_page):
         response = self.session.get(f'https://vjudge.net/status/data?draw={page}&start={page * submissions_per_page}'
                                     f'&length=20&un={self.username}&OJId=All&res=1&orderBy=run_id', verify=False, headers=self.headers, timeout=20)

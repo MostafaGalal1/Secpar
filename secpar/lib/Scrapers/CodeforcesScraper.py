@@ -111,6 +111,24 @@ class CodeforcesScraper(AbstractScraper):
     def login(self):
         pass  # Placeholder for potential login functionality (currently empty)
 
+    def get_new_submissions(self, submissions):
+        new_submissions = []
+        submissions_hash = {}
+
+        for submission in submissions:
+            if not is_valid_submission(submission):
+                continue
+            problem_key = get_problem_hashkey(submission)
+            if self.use_tor and self.check_already_added(problem_key):
+                problem_link = self.current_submissions.get(problem_key)
+                if problem_link == get_submission_link(submission):
+                    self.current_submissions.pop(problem_key)
+            if problem_key not in submissions_hash and not self.check_already_added(problem_key):
+                new_submissions.append(submission)
+                submissions_hash[problem_key] = True
+
+        return new_submissions
+
     # Function to retrieve new submissions and process them
     def get_submissions(self):
         user_submissions_url = f'https://codeforces.com/api/user.status?handle={self.username}'

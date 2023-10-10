@@ -15,8 +15,8 @@ DESCRIPTION = 'Scrape problems submissions from different platforms'
 # Define the authors
 author_name_1 = 'Mahmoud Goda'
 author_email_1 = 'mahmoden17@gmail.com'
-author_name_2 = 'Your Co-Author'
-author_email_2 = 'coauthor@example.com'
+author_name_2 = 'Mostafa Galal'
+author_email_2 = 'mostafam.galal82@gmail.com'
 
 # Combine author information
 authors = f"{author_name_1} <{author_email_1}>, {author_name_2} <{author_email_2}>"
