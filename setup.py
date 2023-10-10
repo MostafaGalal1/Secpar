@@ -19,15 +19,13 @@ author_name_2 = 'Mahmoud Goda'
 author_email_2 = 'mahmoden17@gmail.com'
 
 # Combine author information
-authors = f"<{author_name_1}, {author_name_2}>"
-authers_emails = f"<{author_email_1}, {author_email_2}>"
+authors = f"{author_name_1} <{author_email_1}>, {author_name_2} <{author_email_2}>"
 
 # Setting up
 setup(
     name="Secpar",
     version=VERSION,
     author=authors,
-    author_email=authers_emails,
     description=DESCRIPTION,
     long_description_content_type="text/markdown",
     long_description=long_description,

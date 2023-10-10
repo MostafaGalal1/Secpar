@@ -1,0 +1,183 @@
+Metadata-Version: 2.1
+Name: Secpar
+Version: 1.0.2
+Summary: Scrape problems submissions from different platforms
+Home-page: https://github.com/MostafaGalal1/Secpar
+Author: <Mostafa Galal, Mahmoud Goda>
+Author-email: <mostafam.galal82@gmail.com, mahmoden17@gmail.com>
+License: MIT
+Keywords: CP,scraper,secpar,problem solving,python,tools
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: End Users/Desktop
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.5
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# Scraping Engine for Competitive Programming Accelerated Retriever (Secpar)
+
+## Overview
+
+Secpar is a Python command-line tool designed to scrape code submissions from various online programming platforms and store them in a GitHub repository. It supports platforms such as Codeforces, CSES (University of Helsinki), and Vjudge. This documentation provides a detailed overview of the Scraper's functionalities and how to use them.
+
+#### Demo Repo: [CP-Submissions](https://github.com/MostafaGalal1/CP-Submissions)
+
+## Table of Contents
+
+1. [Features](#features)
+2. [Installation](#installation)
+3. [Usage](#usage)
+    - [Initialization](#initialization)
+    - [Scraping](#scraping)
+4. [Command-Line Interface](#command-line-interface)
+5. [Scraper Configuration](#scraper-configuration)
+6. [Customization](#customization)
+7. [Data Storage](#data-storage)
+8. [FAQs](#faqs)
+9. [Contributing](#contributing)
+10. [License](#license)
+11. [Upcoming Feature](#upcoming-feature) 
+
+## 1. Features <a name="features"></a>
+
+- **Supported Platforms**: Secpar supports the following programming platforms:
+  - Codeforces
+  - CSES (University of Helsinki)
+  - Vjudge
+
+- **GitHub Integration**: Code submissions are stored in a GitHub repository, making it easy to manage and share your solutions.
+
+- **Automatic README Generation**: Secpar automatically generates a README file for your GitHub repository, listing all your code submissions with problem details, links, and tags.
+
+- **Incremental Scraping**: Secpar keeps track of previously scraped submissions, ensuring that only new submissions are added to your repository.
+  
+- **Multi-accounts Scraping**: Scrape the same platform more than once in case of having multiple accounts on that platform without worry of redundancy.
+
+- **Authentication**: Securely authenticate with the supported platforms to access your submissions.
+
+- **Customization**: Customize the formatting of your README and configure other scraper options.
+
+## 2. Installation <a name="installation"></a>
+
+To use Secpar, follow these installation steps:
+
+1. **Clone the Repository**: Clone Secpar repository to your local machine:
+
+    ```shell
+    git clone https://github.com/your-username/scraper.git
+    ```
+
+2. **Install Dependencies**: Install the necessary Python dependencies by navigating to the repository directory and running:
+
+    ```shell
+    pip install -r requirements.txt
+    ```
+
+3. **Configuration**: Set up your GitHub repository and obtain a GitHub access token.
+
+4. **Initialize**: Run the initialization command to set up your user data and repository configuration:
+
+    ```shell
+    python main.py -c init
+    ```
+
+    Follow the prompts to provide your GitHub username, repository name, and access token.
+
+## 3. Usage <a name="usage"></a>
+
+Secpar has two primary modes of operation: initialization and scraping.
+
+### Initialization <a name="initialization"></a>
+
+Initialization is the first step to configure your scraper for a GitHub repository.
+
+1. Run the initialization command:
+
+    ```shell
+    python main.py -c init
+    ```
+
+2. Follow the prompts to enter your GitHub username, repository name, and access token.
+
+### Scraping <a name="scraping"></a>
+
+Scraping allows you to retrieve code submissions from supported platforms and store them in your GitHub repository.
+
+1. To scrape submissions, use the following command:
+
+    ```shell
+    python main.py -s PLATFORM_NAME
+    ```
+
+    Replace `PLATFORM_NAME` with one of the supported platforms: `codeforces`, `cses`, or `vjudge`.
+
+2. Depending on the platform, you may need to provide additional information such as your platform username and password.
+
+3. Secpar will fetch new submissions and update your GitHub repository.
+
+## 4. Command-Line Interface <a name="command-line-interface"></a>
+
+Secpar provides a command-line interface with the following options:
+
+- `-c`, `--command`: Specify the command (`init` for initialization or `update` for scraping).
+
+- `-s`, `--scrap`: Specify the platform to scrape data from (`codeforces`, `cses`, or `vjudge`).
+
+- `--help`: Display usage instructions and available options.
+
+Example usage:
+
+```shell
+python main.py -c init
+python main.py -s codeforces
+```
+
+## 5. Scraper Configuration <a name="scraper-configuration"></a>
+
+Secpar can be configured in several ways:
+
+- **GitHub Configuration**: Set up your GitHub repository details and access token during initialization.
+
+- **Platform Authentication**: Authenticate with your platform credentials (e.g., Codeforces username and password) for scraping.
+
+- **Customization**: Customize the formatting of your README and configure scraper options in the code (e.g., maximum requests, submission per update).
+
+## 6. Customization <a name="customization"></a>
+
+You can customize Secpar's behavior by modifying the source code. Here are some customization options:
+
+- **Formatting**: Customize the formatting of the generated README for each platform. You can modify the formatting in the corresponding `Formatter` class.
+
+- **Configuration**: Adjust Secpar's settings, such as maximum requests, submissions per update, or other platform-specific parameters.
+
+## 7. Data Storage <a name="data-storage"></a>
+
+Secpar stores code submissions and related information in your GitHub repository. Each submission is listed in the README with details such as problem name, language, solution link, tags, and submission date.
+
+## 8. FAQs <a name="faqs"></a>
+
+- **What platforms does Secpar support?**
+  - Secpar currently supports Codeforces, CSES (University of Helsinki), and Vjudge.
+
+- **Is it safe to store my GitHub access token?**
+  - Access tokens should be stored securely. Secpar stores them in a configuration file, and it's essential to protect this file.
+
+- **How can I customize the README format?**
+  - You can customize the README format by modifying the corresponding `Formatter` class for each platform.
+
+## 9. Contributing <a name="contributing"></a>
+
+Contributions to Secpar are welcome! Feel free to fork the repository, make improvements, and create pull requests.
+
+## 10. License <a name="license"></a>
+
+Secpar is released under the MIT License. See the [LICENSE](https://github.com/MostafaGalal1/Secpar/blob/main/LICENSE) file for details.
+
+## 11. Upcoming Features <a name="upcoming-features">
+- More platforms: platforms such as Atcoder and CodeChef are currently being worked on.
+
+---
+
+*Note: This documentation provides an overview of Secpar's functionality and usage. For detailed code explanations, refer to the source code and comments in Secpar's repository.*
