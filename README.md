@@ -66,7 +66,7 @@ Initialization is the first step to configure your scraper for a GitHub reposito
 1. Run the initialization command:
 
     ```shell
-    python main.py -c init
+    python secpar -c init
     ```
 
 2. Follow the prompts to enter your GitHub username, repository name, and access token.
@@ -78,7 +78,7 @@ Scraping allows you to retrieve code submissions from supported platforms and st
 1. To scrape submissions, use the following command:
 
     ```shell
-    Secpar -s PLATFORM_NAME
+    secpar -s PLATFORM_NAME
     ```
 
     Replace `PLATFORM_NAME` with one of the supported platforms: `codeforces`, `cses`, or `vjudge`.
@@ -88,7 +88,7 @@ Scraping allows you to retrieve code submissions from supported platforms and st
 3. Secpar will fetch new submissions and update your GitHub repository.
 
 ### Note:
-To upload submissions codes for codeforces you need to have tor installed and inside your torrc file place these two line:
+To upload submissions codes for codeforces you need to have `Tor` installed and inside your torrc file place these two line:
 
 ```shell
 SocksPort 9050
@@ -110,8 +110,8 @@ Secpar provides a command-line interface with the following options:
 Example usage:
 
 ```shell
-python main.py -c init
-python main.py -s codeforces
+python secpar -c init
+python secpar -s codeforces
 ```
 
 ## 5. Scraper Configuration <a name="scraper-configuration"></a>
