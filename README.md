@@ -1,7 +1,7 @@
 # Scraping Engine for Competitive Programming Accelerated Retriever (Secpar)
 [![PyPI](https://img.shields.io/pypi/v/Secpar.svg)](https://pypi.python.org/pypi/Secpar)
 [![Downloads](https://pepy.tech/badge/Secpar)](https://pepy.tech/project/Secpar)
-[![PyPI](https://img.shields.io/pypi/l/Secpar.svg)]()
+[![PyPI](https://img.shields.io/pypi/l/Secpar.svg)](https://github.com/MostafaGalal1/Secpar/blob/main/LICENSE)
 
 
 ## Overview
@@ -153,7 +153,7 @@ Contributions to Secpar are welcome! Feel free to fork the repository, make impr
 
 ## 10. License <a name="license"></a>
 
-Secpar is released under the MIT License. See the [LICENSE]() file for details.
+Secpar is released under the MIT License. See the [LICENSE](https://github.com/MostafaGalal1/Secpar/blob/main/LICENSE) file for details.
 
 ## 11. Upcoming Features <a name="upcoming-features">
 - More platforms: platforms such as Atcoder and CodeChef are currently being worked on.
