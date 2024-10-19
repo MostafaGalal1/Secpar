@@ -1,6 +1,7 @@
 # Scraping Engine for Competitive Programming Accelerated Retriever (Secpar)
 [![PyPI](https://img.shields.io/pypi/v/Secpar.svg)](https://pypi.python.org/pypi/Secpar)
 [![Downloads](https://pepy.tech/badge/Secpar)](https://pepy.tech/project/Secpar)
+[![PyPI](https://img.shields.io/pypi/l/Secpar.svg)](https://github.com/MostafaGalal1/Secpar/blob/main/LICENSE)
 
 
 ## Overview
